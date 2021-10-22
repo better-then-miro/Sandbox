@@ -1,4 +1,3 @@
-import socketio
 from app import app, socketio
 from flask import render_template
 from flask_socketio import emit
@@ -25,6 +24,11 @@ def example2():
         "textField.html",  exNumber = "2"
     )
 
-@socketio.on("getMessage", namespace="Main")
-def getMessage(msg):
-    print(msg)
+@socketio.on('connect',namespace = '/main')
+def test_connect():
+    print("we have connection")
+
+@socketio.on('getMessage',namespace = '/main')
+def getMessage(message):
+    print(message['message'])
+    emit("confirmer",{})

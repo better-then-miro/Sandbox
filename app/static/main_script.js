@@ -3,11 +3,7 @@ console.log(location.protocol + '//' + document.domain + ':' + location.port + n
 var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 
 socket.on('confirmer', function (msg){
-    console.log("data was received")
-});
-
-socket.on('kek', function (msg){
-    alert(msg.data)
+    console.log(msg)
 });
 
 function send_message() {

@@ -31,4 +31,4 @@ def test_connect():
 @socketio.on('getMessage',namespace = '/main')
 def getMessage(message):
     print(message['message'])
-    emit("confirmer",{})
+    emit("confirmer",message)

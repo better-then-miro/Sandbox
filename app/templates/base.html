@@ -1,0 +1,14 @@
+<html>
+    <head>
+      {% if exNumber %}
+      <title>Example-{{ exNumber }}</title>
+      {% else %}
+      <title>Someone forgot to send a title</title>
+      {% endif %}
+    </head>
+    <body>
+        <div>Page <a href="/index">/Index</a></div>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>

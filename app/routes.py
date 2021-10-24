@@ -1,5 +1,5 @@
 from app import app, socketio
-from flask import render_template, request
+from flask import render_template, request, jsonify
 from flask_socketio import emit
 
 
@@ -27,11 +27,15 @@ def example2():
 @app.route("/example3", methods = ['GET','POST'])
 def example3():
     if request.method == 'POST':
-        print(request.json)
+        content = request.json
+        print(content['msg'])
+        return jsonify(success =True)
     else:
         return render_template( 
-            "textField.html",  exNumber = "3"
+            "example3.html",  exNumber = "3"
         )
+
+    
 @socketio.on('connect',namespace = '/main')
 def test_connect():
     print("we have connection")

@@ -1,5 +1,5 @@
 from app import app, socketio
-from flask import render_template
+from flask import render_template, request
 from flask_socketio import emit
 
 
@@ -21,9 +21,17 @@ def example1():
 @app.route("/example2")
 def example2():
     return render_template( 
-        "textField.html",  exNumber = "2"
+        "example2.html",  exNumber = "2"
     )
 
+@app.route("/example3", methods = ['GET','POST'])
+def example3():
+    if request.method == 'POST':
+        print(request.json)
+    else:
+        return render_template( 
+            "textField.html",  exNumber = "3"
+        )
 @socketio.on('connect',namespace = '/main')
 def test_connect():
     print("we have connection")

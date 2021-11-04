@@ -2,7 +2,7 @@ from flask import Flask
 from flask_socketio import SocketIO
 
 # создаем наше приложение как инстанс фласка
-app = Flask(__name__)
+app = Flask(__name__, static_folder='dist/',    static_url_path='/')
 
 #в действительности нам нужна надстройка над фласком в виде сокетио. Обратите 
 #внимание, что именно этот socketio мы импортируем в sandbox.py

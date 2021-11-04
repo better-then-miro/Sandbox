@@ -8,14 +8,7 @@ posts = []
 @app.route("/")
 @app.route("/index")
 def index():
-    return "This Is just a start page. Try to do /example1, 2, 3"
-
-
-#here we introduce templates
-@app.route("/example1")
-def example1():
-    user = { 'name':"Igor Chiesov"}
-    return render_template("index.html", exNumber = "1", user=user, posts = posts )
+    return app.send_static_file('index.html')
 
 
 @app.route("/example2")

@@ -11,11 +11,9 @@ def index():
     return app.send_static_file('index.html')
 
 
-@app.route("/example2")
+@app.route("/example2", methods = ['GET'])
 def example2():
-    return render_template( 
-        "example2.html",  exNumber = "2"
-    )
+    return jsonify(success = True)
 
 @app.route("/example3", methods = ['GET','POST'])
 def example3():

@@ -26,6 +26,18 @@ def getDiagrams():
                  'name': 'ProjectFromGet_2', 'description': 'test 2', 'type': 'free'}])
 
 
+@app.route("/getDiagramContent", methods = ['GET'])
+def getDiagramContent():
+    print("Diagram content request")
+    return jsonify([
+                 {'blockID' : 1, 'diagramID' : 1, 'type': 'rect', 'x_left': 440,
+                 'y_top': 150, 'width': 50, 'height' : 150},
+                 {'blockID' : 2, 'diagramID' : 1, 'type': 'circle', 'x_left': 140,
+                 'y_top': 400, 'width': 100, 'height' : 50},
+                 {'blockID' : 3, 'diagramID' : 1, 'type': 'rect', 'x_left': 40,
+                 'y_top': 50, 'width': 50, 'height' : 50}])
+                              
+                 
 @app.route("/updateBlockProperties", methods = ['POST'])
 def updateBlockProperties():
     content = request.json

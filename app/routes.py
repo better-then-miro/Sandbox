@@ -4,7 +4,7 @@ from flask_socketio import emit
 
 
 posts = []
-#simple example of how flask work
+
 @app.route("/")
 @app.route("/index")
 def index():
@@ -15,6 +15,7 @@ def index():
 def example2():
     return jsonify(success = True)
 
+
 @app.route("/getDiagrams", methods = ['GET'])
 def getDiagrams():
     print("Diagrams request")
@@ -23,6 +24,14 @@ def getDiagrams():
                  'name': 'ProjectFromGet_1', 'description': 'test 1', 'type': 'strict'},
                  {'diagramID': 2, 'projectID': 2,
                  'name': 'ProjectFromGet_2', 'description': 'test 2', 'type': 'free'}])
+
+
+@app.route("/updateBlockProperties", methods = ['POST'])
+def updateBlockProperties():
+    content = request.json
+    print(content)
+    return jsonify(success = True)
+
 
 @app.route("/example3", methods = ['GET','POST'])
 def example3():
@@ -39,6 +48,7 @@ def example3():
 @socketio.on('connect',namespace = '/main')
 def test_connect():
     print("we have connection")
+
 
 @socketio.on('getMessage',namespace = '/main')
 def getMessage(message):

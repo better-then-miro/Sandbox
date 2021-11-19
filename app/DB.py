@@ -63,14 +63,46 @@ def getDiagramContentByDID(dId):
     dia.links = [Links[lId] for (ddId, lId) in DiagramToLink if ddId==dId]
     return dia
 
-def modifyBlockById(bId, attrName, newValue):
-    setattr(Blocks[bId],attrName,newValue)
+def modifyBlockById(content):
+    if content["Id"] is not None:
+        bId = int( content["Id"])
+        if bId > len(Blocks) or bId < 0:
+            return False
+        if set(content.keys()).issubset(vars(Blocks[bId])):
+            for key in content.keys():
+                setattr(Blocks[bId],key,content[key])
+            return True
+    return False
 
-def modifyLinkById(lId, attrName, newValue):
-    setattr(Links[lId], attrName, newValue)
+def modifyLinkById(content):
+    if content["Id"] is not None:
+        lId = int( content["Id"])
+        if lId > len(Links) or lId < 0:
+            return False
+        if set(content.keys()).issubset(vars(Links[lId])):
+            for key in content.keys():
+                setattr(Links[lId],key,content[key])
+            return True
+    return False
 
-def modifyProjectById(pId, attrName, newValue):
-    setattr(Projects[pId], attrName, newValue)
+def modifyProjectById(content):
+    if content["Id"] is not None:
+        pId = int( content["Id"])
+        if pId > len(Projects) or pId < 0:
+            return False
+        if set(content.keys()).issubset(vars(Projects[pId])):
+            for key in content.keys():
+                setattr(Projects[pId],key,content[key])
+            return True
+    return False
 
-def modifyDiagramById(dId, attrName, newValue):
-    setattr(Diagrams[dId], attrName, newValue)
+def modifyDiagramById(content):
+    if content["Id"] is not None:
+        dId = int( content["Id"])
+        if dId > len(Diagrams) or dId < 0:
+            return False
+        if set(content.keys()).issubset(vars(Diagrams[dId])):
+            for key in content.keys():
+                setattr(Diagrams[dId],key,content[key])
+            return True
+    return False

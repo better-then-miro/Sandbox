@@ -3,7 +3,7 @@ class Project():
         self.Id = pId
         self.name = name
         self.description = description
-    def seralize(self):
+    def serialize(self):
         return vars(self)
         
 
@@ -23,8 +23,8 @@ class Diagram():
         return res 
     def serializeContent(self):
         res = {}
-        res["blocks"] = [block.seralize() for block in self.blocks]
-        res["links"] = [links.seralize() for links in self.links]
+        res["blocks"] = [block.serialize() for block in self.blocks]
+        res["links"] = [links.serialize() for links in self.links]
         return res 
 
     def serializeWhole(self):
@@ -41,7 +41,7 @@ class Block():
         self.coords = (x,y)
         self.width = width
         self.height = height
-    def seralize(self):
+    def serialize(self):
         return vars(self)
 
 class Link():
@@ -50,6 +50,6 @@ class Link():
         self.Type = Type
         self.sId = sourceId
         self.tId = targetId
-    def seralize(self):
+    def serialize(self):
         return vars(self)
 

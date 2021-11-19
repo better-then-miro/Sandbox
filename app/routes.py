@@ -1,5 +1,5 @@
-from app import app, socketio
-from flask import render_template, request, jsonify
+from app import app, socketio, DB
+from flask import render_template, request, jsonify, Response
 from flask_socketio import emit
 
 
@@ -15,36 +15,72 @@ def index():
 def example2():
     return jsonify(success = True)
 
+@app.route("/getProjectList", methods = ['GET'])
+def getProjectList():
+    return jsonify(
+        [project.serialize() for project in DB.getProjects()]
+    )
 
 @app.route("/getDiagrams", methods = ['GET'])
 def getDiagrams():
-    print("Diagrams request")
-    return jsonify([
-                 {'diagramID': 1, 'projectID': 1,
-                 'name': 'ProjectFromGet_1', 'description': 'test 1', 'type': 'strict'},
-                 {'diagramID': 2, 'projectID': 2,
-                 'name': 'ProjectFromGet_2', 'description': 'test 2', 'type': 'free'}])
-
+    pId = request.args.get("Id")
+    if pId is not None:
+        dias = DB.getDiagramsByProject(int(pId))
+        if dias is not None:
+            return jsonify(
+                [dia.serializeInfo() for dia in dias]
+            )
+    
+    return Response(status=422)
 
 @app.route("/getDiagramContent", methods = ['GET'])
 def getDiagramContent():
-    print("Diagram content request")
-    return jsonify([
-                 {'blockID' : 1, 'diagramID' : 1, 'type': 'rect', 'x_left': 440,
-                 'y_top': 150, 'width': 50, 'height' : 150},
-                 {'blockID' : 2, 'diagramID' : 1, 'type': 'circle', 'x_left': 140,
-                 'y_top': 400, 'width': 100, 'height' : 50},
-                 {'blockID' : 3, 'diagramID' : 1, 'type': 'rect', 'x_left': 40,
-                 'y_top': 50, 'width': 50, 'height' : 50}])
-                              
-                 
+    dId = request.args.get("Id")
+    if dId is not None:
+        dia = DB.getDiagramContentByDID(int(dId))
+        if dia is not None:
+            return jsonify(
+                dia.serializeContent()
+            )
+
+    return Response(status=422)
+
+#возможно все 4 запроса могут быть одним 
+#и нам достаточно указывать тип модифицируемого объекта
 @app.route("/updateBlockProperties", methods = ['POST'])
 def updateBlockProperties():
     content = request.json
-    print(content)
-    return jsonify(success = True)
+    if content is not None and DB.modifyBlockById(content):
+        return jsonify(success = True)
+    else:
+        return Response(status = 422)
+
+@app.route("/updateDiagramProperties", methods = ['POST'])
+def updateDiagramProperties():
+    content = request.json
+    if content is not None and DB.modifyDiagramById(content):
+        return jsonify(success = True)
+    else:
+        return Response(status = 422)
+
+@app.route("/updateProjectProperties", methods = ['POST'])
+def updateProjectProperties():
+    content = request.json
+    if content is not None and DB.modifyProjectById(content):
+        return jsonify(success = True)
+    else:
+        return Response(status = 422)      
+
+@app.route("/updateLinkProperties", methods = ['POST'])
+def modifyLinkById():
+    content = request.json
+    if content is not None and DB.modifyLinkById(content):
+        return jsonify(success = True)
+    else:
+        return Response(status = 422)     
 
 
+# legacy
 @app.route("/example3", methods = ['GET','POST'])
 def example3():
     if request.method == 'POST':

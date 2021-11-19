@@ -3,6 +3,8 @@ class Project():
         self.Id = pId
         self.name = name
         self.description = description
+    def seralize(self):
+        return vars(self)
         
 
 class Diagram():
@@ -13,7 +15,22 @@ class Diagram():
         self.type = Type
         self.blocks = blocks.copy()
         self.links = links.copy()
+    def serializeInfo(self):
+        res = {}
+        for key in vars(self).keys():
+            if key != 'blocks' and key != "links":
+                res[key] = self.__dict__[key]
+        return res 
+    def serializeContent(self):
+        res = {}
+        res["blocks"] = [block.seralize() for block in self.blocks]
+        res["links"] = [links.seralize() for links in self.links]
+        return res 
 
+    def serializeWhole(self):
+        res = self.serializeContent() 
+        res.update(self.serializeInfo())
+        return res
 
 # TODO maybe its a good idea to have different types of blocks and 
 # inherit from this class
@@ -24,6 +41,8 @@ class Block():
         self.coords = (x,y)
         self.width = width
         self.height = height
+    def seralize(self):
+        return vars(self)
 
 class Link():
     def __init__(self, lId, Type, sourceId, targetId):
@@ -31,4 +50,6 @@ class Link():
         self.Type = Type
         self.sId = sourceId
         self.tId = targetId
-        
+    def seralize(self):
+        return vars(self)
+

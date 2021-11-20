@@ -86,7 +86,7 @@ def createNewProject():
     if content is not None:
         return jsonify( {"pId" : DB.addProject(content)})
     else:
-        return Response(422)
+        return Response( 422 )
 
 # legacy
 @app.route("/example3", methods = ['GET','POST'])

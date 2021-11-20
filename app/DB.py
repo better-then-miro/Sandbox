@@ -51,12 +51,12 @@ def getProjects():
     return Projects
 
 def getDiagramsByProject(pId):
-    if pId > len(Projects) or pId < 0:
+    if pId >= len(Projects) or pId < 0:
         return None 
     return [Diagrams[dId] for (ppId,dId) in ProjectToDiagrams if ppId==pId]
 
 def getDiagramContentByDID(dId):
-    if dId > len(Diagrams) or dId < 0:
+    if dId >= len(Diagrams) or dId < 0:
         return None
     dia = copy.copy(Diagrams[dId])
     dia.blocks = [Blocks[bId] for (ddId, bId) in DiagramToBlock if ddId==dId]
@@ -66,7 +66,7 @@ def getDiagramContentByDID(dId):
 def modifyBlockById(content):
     if content["Id"] is not None:
         bId = int( content["Id"])
-        if bId > len(Blocks) or bId < 0:
+        if bId >= len(Blocks) or bId < 0:
             return False
         if set(content.keys()).issubset(vars(Blocks[bId])):
             for key in content.keys():
@@ -77,7 +77,7 @@ def modifyBlockById(content):
 def modifyLinkById(content):
     if content["Id"] is not None:
         lId = int( content["Id"])
-        if lId > len(Links) or lId < 0:
+        if lId >= len(Links) or lId < 0:
             return False
         if set(content.keys()).issubset(vars(Links[lId])):
             for key in content.keys():
@@ -88,7 +88,7 @@ def modifyLinkById(content):
 def modifyProjectById(content):
     if content["Id"] is not None:
         pId = int( content["Id"])
-        if pId > len(Projects) or pId < 0:
+        if pId >= len(Projects) or pId < 0:
             return False
         if set(content.keys()).issubset(vars(Projects[pId])):
             for key in content.keys():
@@ -108,8 +108,54 @@ def modifyDiagramById(content):
     return False
 
 def addProject(content):
-    name = content['name'] if content['name'] is not None else ""
-    description = content['description'] if content['description'] is not None else ""
+    keys = content.keys()
+    name = content["name"] if "name" in keys else ""
+    description= content["description"] if "description" in keys else ""
     pId = len(Projects)
     Projects.append(entities.Project(pId,name, description))
     return pId
+
+def addDiagram(content):
+
+    keys = content.keys()
+    name = content["name"] if "name" in keys else ""
+    pId = int(content["pId"]) if "pId" in keys else None
+    Type = content["type"] if "type" in keys else ""
+    description= content["description"] if "description" in keys else ""
+
+    if pId is None or Type is None or pId >= len(Projects) or pId < 0 :
+        return None
+    
+    dId = len(Diagrams)
+    Diagrams.append(entities.Diagram(len(Diagrams), name, description, Type))
+    ProjectToDiagrams.append((pId,dId))
+    return dId
+
+def addBlock(content):
+    keys = content.keys()
+    Type = content["type"] if "type" in keys else None
+    coords = (int(content["coords"][0]), int(content["coords"][1]) ) if "coords" in keys else None
+    width = int(content["width"]) if "width" in keys else None
+    height = int(content["height"]) if "height" in keys else None
+    dId = int(content["dId"]) if "dId" in keys else None
+
+    if Type is None or coords is None or width is None or height is None or dId is None or dId >= len(Diagrams) or dId < 0:
+        return None
+    bId = len(Blocks)
+    Blocks.append(entities.Block(bId, Type, coords[0], coords[1], width, height))
+    DiagramToBlock.append((dId, bId))
+    return bId
+
+def addLink(content):
+    keys = content.keys()
+    Type = content["type"] if "type" in keys else None
+    sId = content["sId"] if "sId" in keys else None
+    tId = content["tId"] if "tId" in keys else None
+    dId = int(content["dId"]) if "dId" in keys else None
+
+    if Type is None or sId is None or tId is None or dId or None or not (dId,tId) in DiagramToBlock or not (dId,sId) in DiagramToBlock:
+        return None 
+    lId = len(Links)
+    Links.append(entities.Link(lId, Type, sId, tId))
+    DiagramToLink.append((dId, lId))
+    return lId

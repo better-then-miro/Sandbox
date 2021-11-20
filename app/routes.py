@@ -80,6 +80,14 @@ def modifyLinkById():
         return Response(status = 422)     
 
 
+@app.route("/createNewProject", methods = ['POST'])
+def createNewProject():
+    content = request.json
+    if content is not None:
+        return jsonify( {"pId" : DB.addProject(content)})
+    else:
+        return Response(422)
+
 # legacy
 @app.route("/example3", methods = ['GET','POST'])
 def example3():

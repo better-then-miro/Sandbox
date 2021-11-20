@@ -106,3 +106,10 @@ def modifyDiagramById(content):
                 setattr(Diagrams[dId],key,content[key])
             return True
     return False
+
+def addProject(content):
+    name = content['name'] if content['name'] is not None else ""
+    description = content['description'] if content['description'] is not None else ""
+    pId = len(Projects)
+    Projects.append(entities.Project(pId,name, description))
+    return pId

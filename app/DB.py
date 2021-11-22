@@ -64,19 +64,26 @@ def getDiagramContentByDID(dId):
     return dia
 
 def modifyBlockById(content):
-    if content["Id"] is not None:
-        bId = int( content["Id"])
+    if "Id" in content.keys():
+        try:
+            bId = int( content["Id"])
+        except ValueError:
+            return False
         if bId >= len(Blocks) or bId < 0:
             return False
         if set(content.keys()).issubset(vars(Blocks[bId])):
             for key in content.keys():
                 setattr(Blocks[bId],key,content[key])
             return True
+        
     return False
 
 def modifyLinkById(content):
-    if content["Id"] is not None:
-        lId = int( content["Id"])
+    if "Id" in content.keys():
+        try:
+            lId = int( content["Id"])
+        except ValueError:
+            return False
         if lId >= len(Links) or lId < 0:
             return False
         if set(content.keys()).issubset(vars(Links[lId])):
@@ -86,8 +93,11 @@ def modifyLinkById(content):
     return False
 
 def modifyProjectById(content):
-    if content["Id"] is not None:
-        pId = int( content["Id"])
+    if "Id" in content.keys():
+        try:
+            pId = int( content["Id"])
+        except ValueError:
+            return False
         if pId >= len(Projects) or pId < 0:
             return False
         if set(content.keys()).issubset(vars(Projects[pId])):
@@ -97,8 +107,11 @@ def modifyProjectById(content):
     return False
 
 def modifyDiagramById(content):
-    if content["Id"] is not None:
-        dId = int( content["Id"])
+    if "Id" in content.keys():
+        try:
+            dId = int( content["Id"])
+        except ValueError:
+            return False
         if dId > len(Diagrams) or dId < 0:
             return False
         if set(content.keys()).issubset(vars(Diagrams[dId])):

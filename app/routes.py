@@ -86,7 +86,7 @@ def createNewProject():
     if content is not None:
         return jsonify( {"pId" : DB.addProject(content)})
     else:
-        return Response( 422 )
+        return Response( status = 422 )
 
 @app.route("/createNewDiagram", methods = ["POST"])
 def createNewDiagram():
@@ -96,7 +96,7 @@ def createNewDiagram():
         dId = DB.addDiagram(content)
         if dId is not None:
             return jsonify({"dId": dId})    
-    return Response(422)
+    return Response(status = 422)
 
 @app.route("/createNewBlock",methods = ["POST"])
 def createNewBlock():
@@ -106,7 +106,7 @@ def createNewBlock():
         bId = DB.addBlock(content)
         if bId is not None:
             return jsonify({"bId":bId})
-    return Response(422)
+    return Response(status = 422)
 
 
 @app.route("/createNewLink",methods = ["POST"])
@@ -117,7 +117,7 @@ def createNewLink():
         lId = DB.addLink(content)
         if lId is not None:
             return jsonify({"lId":lId})
-    return Response(422)
+    return Response(status = 422)
 
 # legacy
 @app.route("/example3", methods = ['GET','POST'])

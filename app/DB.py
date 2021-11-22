@@ -1,3 +1,4 @@
+from werkzeug.utils import validate_arguments
 from app import entities
 import copy
 
@@ -129,10 +130,15 @@ def addProject(content):
     return pId
 
 def addDiagram(content):
-
+    
     keys = content.keys()
+   
     name = content["name"] if "name" in keys else ""
-    pId = int(content["pId"]) if "pId" in keys else None
+    
+    try:
+        pId = int(content["pId"]) if "pId" in keys else None
+    except ValueError:
+        return None
     Type = content["type"] if "type" in keys else ""
     description= content["description"] if "description" in keys else ""
 
@@ -147,11 +153,13 @@ def addDiagram(content):
 def addBlock(content):
     keys = content.keys()
     Type = content["type"] if "type" in keys else None
-    coords = (int(content["coords"][0]), int(content["coords"][1]) ) if "coords" in keys else None
-    width = int(content["width"]) if "width" in keys else None
-    height = int(content["height"]) if "height" in keys else None
-    dId = int(content["dId"]) if "dId" in keys else None
-
+    try:
+        coords = (int(content["coords"][0]), int(content["coords"][1]) ) if "coords" in keys else None
+        width = int(content["width"]) if "width" in keys else None
+        height = int(content["height"]) if "height" in keys else None
+        dId = int(content["dId"]) if "dId" in keys else None
+    except ValueError:
+        return None
     if Type is None or coords is None or width is None or height is None or dId is None or dId >= len(Diagrams) or dId < 0:
         return None
     bId = len(Blocks)
@@ -164,8 +172,10 @@ def addLink(content):
     Type = content["type"] if "type" in keys else None
     sId = content["sId"] if "sId" in keys else None
     tId = content["tId"] if "tId" in keys else None
-    dId = int(content["dId"]) if "dId" in keys else None
-
+    try:
+        dId = int(content["dId"]) if "dId" in keys else None
+    except ValueError:
+        return None
     if Type is None or sId is None or tId is None or dId or None or not (dId,tId) in DiagramToBlock or not (dId,sId) in DiagramToBlock:
         return None 
     lId = len(Links)

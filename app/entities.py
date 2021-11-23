@@ -12,7 +12,7 @@ class Diagram():
         self.Id = dId
         self.name = name
         self.description = description
-        self.type = Type
+        self.Type = Type
         self.blocks = blocks.copy()
         self.links = links.copy()
     def serializeInfo(self):

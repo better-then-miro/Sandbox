@@ -17,10 +17,12 @@ Diagrams = [
 ] 
 
 Blocks = [
-    entities.Block(0,"Std",0,0,5,5),
+    entities.Block(0,"Std",0,0,50,50),
     entities.Block(1,"Std",10,10,5,5),
     entities.Block(2,"Std",0,0,5,5),
     entities.Block(3,"Std",10,10,5,5),
+    entities.Block(4,"circle",10,10,50,30),
+    entities.Block(5,"circle",10,10,50,55),
 ]
 
 Links = [
@@ -33,7 +35,9 @@ DiagramToBlock = [
     (0,0),
     (0,1),
     (1,2),
-    (1,3)
+    (1,3),
+    (0,4),
+    (0,5)
 ]
 
 DiagramToLink = [

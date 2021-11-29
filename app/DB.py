@@ -10,24 +10,24 @@ Projects = [
 ]
 
 Diagrams = [
-    entities.Diagram(0, "Diagram 0", "-","Type"),
-    entities.Diagram(1, "Diagram 1", "-","Type"),
-    entities.Diagram(2, "Diagram 2", "-","Type"),
-    entities.Diagram(3, "Diagram 3", "-","Type")
+    entities.Diagram(0, "Diagram 0", "-","Strict"),
+    entities.Diagram(1, "Diagram 1", "-","Strict"),
+    entities.Diagram(2, "Diagram 2", "-","Free"),
+    entities.Diagram(3, "Diagram 3", "-","Free")
 ] 
 
 Blocks = [
-    entities.Block(0,"Std",0,0,50,50),
-    entities.Block(1,"Std",10,10,5,5),
-    entities.Block(2,"Std",0,0,5,5),
-    entities.Block(3,"Std",10,10,5,5),
-    entities.Block(4,"circle",10,10,50,30),
-    entities.Block(5,"circle",10,10,50,55),
+    entities.Block(0,"Class",0,0,50,50),
+    entities.Block(1,"Class",10,10,5,5),
+    entities.Block(2,"Class",0,0,5,5),
+    entities.Block(3,"Class",10,10,5,5),
+    entities.Block(4,"Use-case",10,10,50,30),
+    entities.Block(5,"Use-case",10,10,50,55),
 ]
 
 Links = [
-    entities.Link(0,"Std", 0,1),
-    entities.Link(1,"Std", 3,2)
+    entities.Link(0,"Association", 0,1),
+    entities.Link(1,"Include", 3,2)
 ]
 
 

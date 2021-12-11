@@ -17,12 +17,12 @@ Diagrams = [
 ] 
 
 Blocks = [
-    entities.Block(0,"Class",0,0,50,50),
-    entities.Block(1,"Class",10,10,5,5),
-    entities.Block(2,"Class",0,0,5,5),
-    entities.Block(3,"Class",10,10,5,5),
-    entities.Block(4,"Use-case",10,10,50,30),
-    entities.Block(5,"Use-case",10,10,50,55),
+    entities.Block(0,"Class",200,50,50,50),
+    entities.Block(1,"Class",100,60,50,70),
+    entities.Block(2,"Class",300,40,100,70),
+    entities.Block(3,"Class",150,100,50,40),
+    entities.Block(4,"Use-case",100,200,60,100),
+    entities.Block(5,"Use-case",200,250,100,100),
 ]
 
 Links = [

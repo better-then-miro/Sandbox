@@ -32,15 +32,32 @@ class Diagram():
         res.update(self.serializeInfo())
         return res
 
+
+'''
+
+{
+    Id : Id,
+    ...
+    additionalFields : {
+            "methods" : [],
+            ""
+        }
+
+}
+
+'''
 # TODO maybe its a good idea to have different types of blocks and 
 # inherit from this class
 class Block():
-    def __init__(self, bId, Type, x,y,width, height):
+    def __init__(self, bId, Type, x,y,width, height, description,title,additionalFields):
         self.Id= bId
         self.Type = Type
         self.coords = (x,y)
         self.width = width
         self.height = height
+        self.description = description
+        self.title = title
+        self.additionalFields = additionalFields
     def serialize(self):
         return vars(self)
 

@@ -27,22 +27,26 @@ Blocks = [
 
 Links = [
     entities.Link(0,"Association", 0,1),
-    entities.Link(1,"Include", 3,2)
+    entities.Link(1,"Association", 1,4),
+    entities.Link(2,"Association", 1,5),
+    entities.Link(3,"Include", 3,2),
 ]
 
 
 DiagramToBlock = [
     (0,0),
     (0,1),
-    (1,2),
-    (1,3),
     (0,4),
-    (0,5)
+    (0,5),
+    (1,2),
+    (1,3)
 ]
 
 DiagramToLink = [
     (0,0),
-    (1,1)
+    (0,1),
+    (0,2),
+    (1,3)
 ]
 
 ProjectToDiagrams = [

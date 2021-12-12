@@ -143,7 +143,7 @@ def addDiagram(content):
         pId = int(content["pId"]) if "pId" in keys else None
     except ValueError:
         return None
-    Type = content["type"] if "type" in keys else ""
+    Type = content["Type"] if "Type" in keys else ""
     description= content["description"] if "description" in keys else ""
 
     if pId is None or Type is None or pId >= len(Projects) or pId < 0 :
@@ -156,7 +156,7 @@ def addDiagram(content):
 
 def addBlock(content):
     keys = content.keys()
-    Type = content["type"] if "type" in keys else None
+    Type = content["Type"] if "Type" in keys else None
     try:
         coords = (int(content["coords"][0]), int(content["coords"][1]) ) if "coords" in keys else None
         width = int(content["width"]) if "width" in keys else None
@@ -173,7 +173,7 @@ def addBlock(content):
 
 def addLink(content):
     keys = content.keys()
-    Type = content["type"] if "type" in keys else None
+    Type = content["Type"] if "Type" in keys else None
     sId = content["sId"] if "sId" in keys else None
     tId = content["tId"] if "tId" in keys else None
     try:

@@ -114,7 +114,7 @@ def getDiagrams(pId):
 
 
 
-def getDiagrams(dId):
+def getBlocks(dId):
     with conn:
         c.execute(''' SELECT b.bId ,b.Type ,b.x ,b.y ,b.width ,b.height ,b.description,b.title,b.additionalFields
          FROM Blocks b INNER JOIN DiagramToBlocks db ON
@@ -146,7 +146,7 @@ print(addNewBlock(bl3,dia1.Id))
 print(addNewBlock(bl4,dia2.Id))
 
 print("now res")
-print(getDiagrams(dia1.Id))
+print(getBlocks(dia1.Id))
 
 
 conn.close()

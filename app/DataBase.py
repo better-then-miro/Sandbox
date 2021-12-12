@@ -88,6 +88,20 @@ def addNewDiagram(dia, pId):
     dia.Id = key
     return dia.Id
 
+def addNewBlock(block,dId):
+    params = block.serialize()
+    params["x"]=block.coords[0]
+    params["y"]=block.coords[1]
+    params.pop("coords")
+    params.pop("Id")
+    params["additionalFields"] = json.dumps(block.additionalFields)
+    with conn:
+        c.execute('''INSERT INTO Blocks VALUES (NULL, :Type, :x, :y, :width, :height, :description, :title, :additionalFields)''', params)
+        block.Id = c.lastrowid
+        c.execute("INSERT INTO DiagramToBlocks VALUES (:dId, :bId)", {"dId":dId, "bId":block.Id})
+    return block.Id
+
+
 def getDiagrams(pId):
     with conn:
         c.execute(''' SELECT d.dId, d.name, d.description, d.Type FROM Diagrams d INNER JOIN ProjectToDiagrams pd ON
@@ -97,23 +111,6 @@ def getDiagrams(pId):
         res = c.fetchall()
     return res
 
-def addNewBlock(block,dId):
-    #yes I feel shame for this 
-    params = {
-            "type":block.Type,
-            "x":block.coords[0],
-            "y":block.coords[1],
-            "width": block.width,
-            "height": block.height,
-            "description":block.description,
-            "title":block.title,
-            "additionalFields":json.dumps(block.additionalFields)
-        }
-    with conn:
-        c.execute('''INSERT INTO Blocks VALUES (NULL, :type, :x, :y, :width, :height, :description, :title, :additionalFields)''', params)
-        block.Id = c.lastrowid
-        c.execute("INSERT INTO DiagramToBlocks VALUES (:dId, :bId)", {"dId":dId, "bId":block.Id})
-    return block.Id
 
 
 

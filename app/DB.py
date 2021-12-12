@@ -167,7 +167,12 @@ def addBlock(content):
     if Type is None or coords is None or width is None or height is None or dId is None or dId >= len(Diagrams) or dId < 0:
         return None
     bId = len(Blocks)
-    Blocks.append(entities.Block(bId, Type, coords[0], coords[1], width, height))
+    title = content["title"] if "title" in keys else ""
+    description = content["description"] if "description" in keys else ""
+    additionalFields = content["additionalFields"] if "additionalFields" in keys else {}
+    
+    
+    Blocks.append(entities.Block(bId, Type, coords[0], coords[1], width, height, description, title, additionalFields ))
     DiagramToBlock.append((dId, bId))
     return bId
 

@@ -49,7 +49,7 @@ class Diagram():
 # TODO maybe its a good idea to have different types of blocks and 
 # inherit from this class
 class Block():
-    def __init__(self, bId, Type, x,y,width, height, description,title,additionalFields):
+    def __init__(self, bId, Type, x,y,width, height, description="",title="",additionalFields={}):
         self.Id= bId
         self.Type = Type
         self.coords = (x,y)

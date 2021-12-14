@@ -189,7 +189,7 @@ def addLink(content):
         dId = int(content["dId"]) if "dId" in keys else None
     except ValueError:
         return None
-    if Type is None or sId is None or tId is None or dId or None or not (dId,tId) in DiagramToBlock or not (dId,sId) in DiagramToBlock:
+    if Type is None or sId is None or tId is None or dId is None or not (dId,tId) in DiagramToBlock or not (dId,sId) in DiagramToBlock:
         return None 
     lId = len(Links)
     Links.append(entities.Link(lId, Type, sId, tId))

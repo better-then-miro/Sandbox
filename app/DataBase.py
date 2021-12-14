@@ -35,8 +35,6 @@ c.execute('''CREATE TABLE Blocks (
     PRIMARY KEY (bId)
 )''')
 
-
-
 c.execute('''CREATE TABLE DiagramToBlocks (
     dId INTEGER,
     bId INTEGER,
@@ -57,10 +55,7 @@ c.execute('''CREATE TABLE ProjectToDiagrams (
 )
 ''')
 
-
 conn.commit()
-
-
 
 pr1 = Project(None, "pr1","lol")
 pr2 = Project(None, "pr2","kek")
@@ -101,7 +96,6 @@ def addNewBlock(block,dId):
         c.execute("INSERT INTO DiagramToBlocks VALUES (:dId, :bId)", {"dId":dId, "bId":block.Id})
     return block.Id
 
-
 def getDiagrams(pId):
     with conn:
         c.execute(''' SELECT d.dId, d.name, d.description, d.Type FROM Diagrams d INNER JOIN ProjectToDiagrams pd ON
@@ -110,9 +104,6 @@ def getDiagrams(pId):
         ''', {"pId": pId})
         res = c.fetchall()
     return res
-
-
-
 
 def getBlocks(dId):
     with conn:

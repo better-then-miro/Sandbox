@@ -149,13 +149,36 @@ def getLinks(dId):
         res = c.fetchall()
     return res
 
-
-def modifyDiagramById(newAttrs, dId):
+# ОТЛИЧНЫЙ ПЛАН, НАДЕЖНЫЙ БЛЯТЬ КАК ШВЕЙЦАРСКИЕ ЧАСЫ
+def modify(Table, newAttrs, Id):
+    # we do need this shit because in each table the corresponding Id field 
+    # starts with lowercased first letter of Table's name. dId for Diagrams, pId for Projects etc.
+    if Table in ("Diagrams", "Links","Projects","Blocks"):
+        idName = Table[0].lower() + "Id"
+    else:
+        return False 
+    
     keys = newAttrs.keys()
+    if "Id" in keys:
+        keys.pop("Id")
     with conn:
+        # I'm just to lazy to parse the entire json by myself. We're in python anyway
         for key in keys :
             # i dont even know whether it is an sql-injection, shitcode or smth genius
-            c.execute("UPDATE Diagrams SET {} = :value WHERE dId = :dId".format(key), {"value": newAttrs[key], "dId":dId})
+            c.execute("UPDATE {} SET {} = :value WHERE {} = :Id".format(Table, key,idName), {"value": newAttrs[key], "Id":Id})
+    return True
+
+def modifyDiagram(newAttrs, Id):
+    return modify("Diagrams", newAttrs, Id)
+
+def modifyBlock(newAttrs, Id):
+    return modify("Blocks", newAttrs, Id)
+
+def modifyLink(newAttrs, Id):
+    return modify("Links", newAttrs, Id)
+
+def modifyProject(newAttrs, Id):
+    return modify("Projects", newAttrs, Id)
 
 
 print("adding projects")
@@ -186,10 +209,10 @@ print(addNewLink(l3, dia2.Id))
 print(addNewLink(l4, dia1.Id))
 
 print("now res")
-modifyDiagramById({"name":"prikol","description":"pizdec"}, dia1.Id)
+modifyProject({"name":'bl1.Id',"description":"0"}, pr1.Id)
 
 with conn:
-    c.execute("SELECT * FROM Diagrams WHERE dId = 1")
+    c.execute("SELECT * FROM Projects WHERE pId = 1")
     print(c.fetchall())
 
 conn.close()

@@ -7,7 +7,7 @@ conn = sql.connect(":memory:")
 
 c = conn.cursor()
 
-c.execute('''CREATE TABLE Diagrams (
+c.execute('''CREATE TABLE Diagrams (    
     dId INTEGER NOT NULL,
     name TEXT,
     description TEXT,
@@ -35,23 +35,36 @@ c.execute('''CREATE TABLE Blocks (
     PRIMARY KEY (bId)
 )''')
 
+c.execute('''CREATE TABLE Links (
+    lId INTEGER NOT NULL,
+    type TEXT,
+    sId INTEGER,
+    tId INTEGER,
+    FOREIGN KEY (sId, tId) REFERENCES Blocks (bId,bId),
+    PRIMARY KEY (lId)
+)''')
+
 c.execute('''CREATE TABLE DiagramToBlocks (
     dId INTEGER,
     bId INTEGER,
-    FOREIGN KEY (dId)
-    REFERENCES Diagrams (dId),
-    FOREIGN KEY (bId)
-    REFERENCES Blocks (bId)
+    FOREIGN KEY (dId) REFERENCES Diagrams (dId),
+    FOREIGN KEY (bId) REFERENCES Blocks (bId)
 )
 ''')
 
 c.execute('''CREATE TABLE ProjectToDiagrams (
     pId INTEGER,
     dId INTEGER,
-    FOREIGN KEY (pId)
-    REFERENCES Projects (pId),
-    FOREIGN KEY (dId)
-    REFERENCES Diagrams (dId)
+    FOREIGN KEY (pId) REFERENCES Projects (pId),
+    FOREIGN KEY (dId) REFERENCES Diagrams (dId)
+)
+''')
+
+c.execute('''CREATE TABLE DiagramToLinks (
+    dId INTEGER,
+    lId INTEGER,
+    FOREIGN KEY (dId) REFERENCES Diagrams (dId),
+    FOREIGN KEY (lId) REFERENCES Links (lId)
 )
 ''')
 

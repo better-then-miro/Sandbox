@@ -81,6 +81,10 @@ bl1 = Block(None,"Class",200,50,50,50,additionalFields={"attrs":["private static
 bl2 = Block(None,"Class",100,60,50,70)
 bl3 = Block(None,"Class",300,40,100,70)
 bl4 = Block(None,"Class",150,100,50,40)
+l1 = Link(0,"Association", 0,1)
+l2 = Link(1,"Association", 1,4)
+l3 = Link(2,"Association", 1,5)
+l4 = Link(3,"Include", 3,2)
 
 def addNewProject(pr):
     with conn:
@@ -109,6 +113,16 @@ def addNewBlock(block,dId):
         c.execute("INSERT INTO DiagramToBlocks VALUES (:dId, :bId)", {"dId":dId, "bId":block.Id})
     return block.Id
 
+def addNewLink(link,dId):
+    params = link.serialize()
+    params.pop("Id")
+    with conn:
+        c.execute("INSERT INTO Links VALUES (NULL, :Type, :sId, :tId)",params)
+        link.Id = c.lastrowid
+        c.execute("INSERT INTO DiagramToLinks VALUES (:dId, :lId)", {"dId":dId, "lId":link.Id})
+    return link.Id
+
+
 def getDiagrams(pId):
     with conn:
         c.execute(''' SELECT d.dId, d.name, d.description, d.Type FROM Diagrams d INNER JOIN ProjectToDiagrams pd ON
@@ -126,6 +140,22 @@ def getBlocks(dId):
         ''', {"dId": dId})
         res = c.fetchall()
     return res
+
+def getLinks(dId):
+    with conn:
+        c.execute('''SELECT * FROM Links l
+        INNER JOIN DiagramToLinks dl ON 
+        l.lId = dl.lId and dl.dId = :dId''', {"dId":dId})
+        res = c.fetchall()
+    return res
+
+
+def modifyDiagramById(newAttrs, dId):
+    keys = newAttrs.keys()
+    with conn:
+        for key in keys :
+            # i dont even know whether it is an sql-injection, shitcode or smth genius
+            c.execute("UPDATE Diagrams SET {} = :value WHERE dId = :dId".format(key), {"value": newAttrs[key], "dId":dId})
 
 
 print("adding projects")
@@ -149,8 +179,17 @@ print(addNewBlock(bl2,dia1.Id))
 print(addNewBlock(bl3,dia1.Id))
 print(addNewBlock(bl4,dia2.Id))
 
-print("now res")
-print(getBlocks(dia1.Id))
+print("adding links")
+print(addNewLink(l1, dia1.Id))
+print(addNewLink(l2, dia1.Id))
+print(addNewLink(l3, dia2.Id))
+print(addNewLink(l4, dia1.Id))
 
+print("now res")
+modifyDiagramById({"name":"prikol","description":"pizdec"}, dia1.Id)
+
+with conn:
+    c.execute("SELECT * FROM Diagrams WHERE dId = 1")
+    print(c.fetchall())
 
 conn.close()

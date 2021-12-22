@@ -17,11 +17,18 @@ Diagrams = [
 ] 
 
 Blocks = [
-    entities.Block(0,"Class",200,50,50,50),
-    entities.Block(1,"Class",100,60,50,70),
+    entities.Block(0,"Class",200,50,50,50, 'Controller', '', additionalFields=
+    {
+        'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)'],
+        'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId']
+    }),
+    entities.Block(1,"Class",100,60,50,70, 'Link', '', additionalFields=
+    {
+        'Attributes': ['lId', 'type', 'sourceId', 'targetId']
+    }),
     entities.Block(2,"Class",300,40,100,70),
     entities.Block(3,"Class",150,100,50,40),
-    entities.Block(4,"Use-case",100,200,60,100),
+    entities.Block(4,"Actor",100,200,60,100),
     entities.Block(5,"Use-case",200,250,100,100),
 ]
 
@@ -176,7 +183,7 @@ def addBlock(content):
     additionalFields = content["additionalFields"] if "additionalFields" in keys else {}
     
     
-    Blocks.append(entities.Block(bId, Type, coords[0], coords[1], width, height, description, title, additionalFields ))
+    Blocks.append(entities.Block(bId, Type, coords[0], coords[1], width, height, title, description, additionalFields ))
     DiagramToBlock.append((dId, bId))
     return bId
 

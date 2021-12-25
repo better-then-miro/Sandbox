@@ -260,6 +260,9 @@ class DataBase():
             newAttrs["x"]=newAttrs["coords"][0]
             newAttrs["y"]=newAttrs["coords"][1]
             newAttrs.pop("coords")
+        if "additionalFields" in keys:
+            newAttrs["additionalFields"] = json.dumps(newAttrs["additionalFields"])
+
         return self.__modify("Blocks", newAttrs, Id)
 
     def modifyLink(self, newAttrs, Id):

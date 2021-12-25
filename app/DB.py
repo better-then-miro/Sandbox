@@ -19,12 +19,13 @@ Diagrams = [
 Blocks = [
     entities.Block(0,"Class",200,50,50,50, 'Controller', '', additionalFields=
     {
-        'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)'],
-        'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId']
+        'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId'],
+        'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)']
     }),
     entities.Block(1,"Class",100,60,50,70, 'Link', '', additionalFields=
     {
-        'Attributes': ['lId', 'type', 'sourceId', 'targetId']
+        'Attributes': ['lId', 'type', 'sourceId', 'targetId'],
+        'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)']
     }),
     entities.Block(2,"Class",300,40,100,70),
     entities.Block(3,"Class",150,100,50,40),
@@ -34,9 +35,9 @@ Blocks = [
 
 Links = [
     entities.Link(0,"Association", 0,1),
-    entities.Link(1,"Association", 1,4),
+    entities.Link(1,"Dependency", 1,4),
     entities.Link(2,"Association", 1,5),
-    entities.Link(3,"Include", 3,2),
+    entities.Link(3,"Dependency", 3,2),
 ]
 
 

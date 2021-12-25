@@ -8,11 +8,7 @@ class Project():
         
 
 class Diagram():
-<<<<<<< HEAD
     def __init__(self, dId, name, description,Type, mode, blocks=[], links = []):
-=======
-    def __init__(self, dId, name, description,Type,mode, blocks=[], links = []):
->>>>>>> DataBase
         self.Id = dId
         self.name = name
         self.description = description        

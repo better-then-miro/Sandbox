@@ -10,10 +10,10 @@ Projects = [
 ]
 
 Diagrams = [
-    entities.Diagram(0, "Diagram 0", "-","Strict"),
-    entities.Diagram(1, "Diagram 1", "-","Strict"),
-    entities.Diagram(2, "Diagram 2", "-","Free"),
-    entities.Diagram(3, "Diagram 3", "-","Free")
+    entities.Diagram(0, "Diagram 0", "-","use-case","Strict"),
+    entities.Diagram(1, "Diagram 1", "-","use-case","Strict"),
+    entities.Diagram(2, "Diagram 2", "-","use-case","Free"),
+    entities.Diagram(3, "Diagram 3", "-","use-case","Free")
 ] 
 
 Blocks = [
@@ -154,14 +154,16 @@ def addDiagram(content):
         pId = int(content["pId"]) if "pId" in keys else None
     except ValueError:
         return None
+    
     Type = content["Type"] if "Type" in keys else ""
     description= content["description"] if "description" in keys else ""
+    mode = content["mode"] if "mode" in keys else "free"
 
     if pId is None or Type is None or pId >= len(Projects) or pId < 0 :
         return None
     
     dId = len(Diagrams)
-    Diagrams.append(entities.Diagram(len(Diagrams), name, description, Type))
+    Diagrams.append(entities.Diagram(len(Diagrams), name, description, Type, mode))
     ProjectToDiagrams.append((pId,dId))
     return dId
 

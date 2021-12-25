@@ -8,11 +8,12 @@ class Project():
         
 
 class Diagram():
-    def __init__(self, dId, name, description,Type, blocks=[], links = []):
+    def __init__(self, dId, name, description,Type, mode, blocks=[], links = []):
         self.Id = dId
         self.name = name
         self.description = description
         self.Type = Type
+        self.mode = mode
         self.blocks = blocks.copy()
         self.links = links.copy()
     def serializeInfo(self):

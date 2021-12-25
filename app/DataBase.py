@@ -345,6 +345,3 @@ class DataBase():
             print(self.c.fetchall())
             self.c.execute("SELECT * FROM ProjectToDiagrams")
             print(self.c.fetchall())
-
-db = DataBase(DATABASEMODE.MEMORY)
-db.modifyProject({'name':"pizdec"}, 1)

@@ -6,6 +6,8 @@ import json
 conn = sql.connect(":memory:")
 
 c = conn.cursor()
+c.execute("PRAGMA foreign_keys=on")
+conn.commit()
 
 c.execute('''CREATE TABLE Diagrams (    
     dId INTEGER NOT NULL,
@@ -41,23 +43,24 @@ c.execute('''CREATE TABLE Links (
     type TEXT,
     sId INTEGER,
     tId INTEGER,
-    FOREIGN KEY (sId, tId) REFERENCES Blocks (bId,bId),
+    FOREIGN KEY (sId) REFERENCES Blocks (bId) ON DELETE CASCADE,
+    FOREIGN KEY (tId) REFERENCES Blocks (bId) ON DELETE CASCADE,
     PRIMARY KEY (lId)
 )''')
 
 c.execute('''CREATE TABLE DiagramToBlocks (
     dId INTEGER,
     bId INTEGER,
-    FOREIGN KEY (dId) REFERENCES Diagrams (dId),
-    FOREIGN KEY (bId) REFERENCES Blocks (bId)
+    FOREIGN KEY (dId) REFERENCES Diagrams (dId) ON DELETE CASCADE,
+    FOREIGN KEY (bId) REFERENCES Blocks (bId) ON DELETE CASCADE
 )
 ''')
 
 c.execute('''CREATE TABLE ProjectToDiagrams (
     pId INTEGER,
     dId INTEGER,
-    FOREIGN KEY (pId) REFERENCES Projects (pId),
-    FOREIGN KEY (dId) REFERENCES Diagrams (dId)
+    FOREIGN KEY (pId) REFERENCES Projects (pId) ON DELETE CASCADE,
+    FOREIGN KEY (dId) REFERENCES Diagrams (dId) ON DELETE CASCADE
 )
 ''')
 
@@ -65,29 +68,15 @@ c.execute('''CREATE TABLE DiagramToLinks (
     dId INTEGER,
     lId INTEGER,
     FOREIGN KEY (dId) REFERENCES Diagrams (dId),
-    FOREIGN KEY (lId) REFERENCES Links (lId)
+    FOREIGN KEY (lId) REFERENCES Links (lId) ON DELETE CASCADE
 )
 ''')
 
 conn.commit()
 
-pr1 = Project(None, "pr1","lol")
-pr2 = Project(None, "pr2","kek")
 
-dia1 = Diagram(None, "dia1", "suka", "Type", "mode")
-dia2 = Diagram(None, "dia2", "suka", "Type", "mode")
-dia3 = Diagram(None, "dia3", "suka", "Type", "mode")
-dia4 = Diagram(None, "dia4", "suka", "Type", "mode")
 
-bl1 = Block(None,"Class",200,50,50,50,additionalFields={"attrs":["private static int jopa","hui"],"methods":["int main()","void lel()"]})
-bl2 = Block(None,"Class",100,60,50,70)
-bl3 = Block(None,"Class",300,40,100,70)
-bl4 = Block(None,"Class",150,100,50,40)
 
-l1 = Link(0,"Association", 0,1)
-l2 = Link(1,"Association", 1,4)
-l3 = Link(2,"Association", 1,5)
-l4 = Link(3,"Include", 3,2)
 
 def addNewProject(pr):
     with conn:
@@ -186,38 +175,59 @@ def modifyProject(newAttrs, Id):
     return modify("Projects", newAttrs, Id)
 
 
-print("adding projects")
-newId = addNewProject(pr1)
-print(newId)
-newId = addNewProject(pr2)
-print(newId)
+def delete(Table, Id):
+    if Table in ("Diagrams", "Links","Projects","Blocks"):
+        idName = Table[0].lower() + "Id"
+    else:
+        return False
+    
+    with conn:
+        c.execute("DELETE FROM {} WHERE {} = :Id".format(Table, idName), { "Id": Id})
+    return True
 
-print("adding diagrams")
-newId = addNewDiagram(dia1, pr1.Id)
-print(newId)
-newId = addNewDiagram(dia2, pr1.Id)
-print(newId)
-newId = addNewDiagram(dia3, pr2.Id)
-print(newId)
-newId = addNewDiagram(dia4, pr2.Id)
-print(newId)
-print("adding blocks")
-print(addNewBlock(bl1,dia1.Id))
-print(addNewBlock(bl2,dia1.Id))
-print(addNewBlock(bl3,dia1.Id))
-print(addNewBlock(bl4,dia2.Id))
 
-print("adding links")
-print(addNewLink(l1, dia1.Id))
-print(addNewLink(l2, dia1.Id))
-print(addNewLink(l3, dia2.Id))
-print(addNewLink(l4, dia1.Id))
+def deleteDiagram(Id):
+    with conn:
+        # we kinda have to do subquery cause sqlite doesn't support DELETE JOIN :c 
+        c.execute(
+            ''' DELETE FROM Blocks 
+                WHERE bId IN (
+                    SELECT b.bId FROM Blocks b
+                    INNER JOIN DiagramToBlocks db 
+                    ON b.bId = db.bId and dId = :dId
+                )
+             ''',
+             {"dId":Id}
+            )
+        c.execute(
+            ''' DELETE FROM Links 
+                WHERE lId IN (
+                    SELECT l.lId FROM Links l 
+                    INNER JOIN DiagramToLinks dl
+                    ON l.lId = dl.lId and dl.dId = :dId
+                )
+            ''',
+            {"dId":Id}
+        )
+        c.execute("DELETE FROM Diagrams WHERE dId = :dId", {"dId":Id})
 
-print("now res")
-modifyDiagram({"mode":'strict'}, dia1.Id)
+def deleteBlock(Id):
+    with conn:
+        c.execute("DELETE FROM Blocks WHERE bId = :Id", {"Id": Id})
+    return True
 
-with conn:
-    c.execute("SELECT * FROM Diagrams WHERE dId = 1")
-    print(c.fetchall())
+def deleteLink(Id):
+    with conn:
+        c.execute("DELETE FROM Links WHERE lId = :Id", {"Id": Id})
+    return True
 
-conn.close()
+def deleteProject(Id):
+    with conn:
+        c.execute("SELECT dId FROM ProjectToDiagrams WHERE pId = :pId",{"pId":Id} )
+        diagrams = c.fetchall()
+        for dia in diagrams:
+            deleteDiagram(dia[0])
+        
+        c.execute("DELETE FROM Projects WHERE pId = :pId", {"pId": Id})
+    return True
+

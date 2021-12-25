@@ -25,7 +25,7 @@ def getProjectList():
 def getDiagrams():
     pId = request.args.get("Id")
     if pId is not None:
-        dias = DB.getDiagramsByProject(int(pId))
+        dias = DB.getDiagramsByProject(pId)
         if dias is not None:
             return jsonify(
                 [dia.serializeInfo() for dia in dias]
@@ -37,7 +37,7 @@ def getDiagrams():
 def getDiagramContent():
     dId = request.args.get("Id")
     if dId is not None:
-        dia = DB.getDiagramContentByDID(int(dId))
+        dia = DB.getDiagramContentByDID(dId)
         if dia is not None:
             return jsonify(
                 dia.serializeContent()

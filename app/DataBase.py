@@ -1,6 +1,6 @@
 import sqlite3 as sql
 from sqlite3.dbapi2 import paramstyle
-from entities import Block, Diagram, Project, Link
+from app import entities
 import json
 from enum import Enum
 
@@ -12,7 +12,7 @@ class DATABASEMODE(Enum):
 class DataBase():
     def __init__(self, mode, isInited = True, path = "", isDebug = False):
         if mode == DATABASEMODE.MEMORY:
-            self.conn = sql.connect(":memory:")
+            self.conn = sql.connect(":memory:",check_same_thread=False)
             self.c = self.conn.cursor()
             self.c.execute("PRAGMA foreign_keys=on")
             self.conn.commit()
@@ -94,35 +94,43 @@ class DataBase():
         self.conn.commit()
 
     def __debugFill(self):
-        pr1 = Project(None, "pr1", "pr1")
-        pr2 = Project(None, "pr2", "pr2")
+        pr1 = entities.Project(None, "test 0","Project 0" )
+        pr2 = entities.Project(None, "test 1","Project 1" )
+        pr3 = entities.Project(None, "test 2","Project 2" )
         self.addNewProject(pr1)
         self.addNewProject(pr2)
+        self.addNewProject(pr3)
 
-        dia1 = Diagram(None, "dia1", "descp1", "Type1","mode1")
-        dia2 = Diagram(None, "dia2", "descp2", "Type2","mode2")
+        dia1 = entities.Diagram(None, "Diagram 0", "-","use-case","Strict")
+        dia2 = entities.Diagram(None, "Diagram 1", "-","use-case","Strict")
+        dia3 = entities.Diagram(None, "Diagram 2", "-","use-case","Free")
+        dia4 = entities.Diagram(None, "Diagram 3", "-","use-case","Free")
         self.addNewDiagram(dia1,pr1.Id)
         self.addNewDiagram(dia2,pr2.Id)
+        self.addNewDiagram(dia3,pr3.Id)
+        self.addNewDiagram(dia4,pr1.Id)
 
-        bl1 = Block(None, "Type1", 1,1,10,10)
-        bl2 = Block(None, "Type2", 2,2,20,20)
-        bl3 = Block(None, "Type3", 3,3,30,30)
-        bl4 = Block(None, "Type4", 4,4,40,40)
+        bl1 = entities.Block(None,"Class",200,50,50,50)
+        bl2 = entities.Block(None,"Class",100,60,50,70)
+        bl3 = entities.Block(None,"Class",300,40,100,70)
+        bl4 = entities.Block(None,"Class",150,100,50,40)
+        bl5 = entities.Block(None,"Use-case",100,200,60,100)
+        bl6 = entities.Block(None,"Use-case",200,250,100,100)
 
 
         self.addNewBlock(bl1,dia1.Id)
         self.addNewBlock(bl2,dia1.Id)
         self.addNewBlock(bl3,dia2.Id)
         self.addNewBlock(bl4,dia2.Id)
+        self.addNewBlock(bl5,dia1.Id)
+        self.addNewBlock(bl6,dia1.Id)
 
-        l1 = Link(None, "Type1", bl1.Id, bl2.Id)
-        l2 = Link(None, "Type1", bl2.Id, bl1.Id)
-        l3 = Link(None, "Type1", bl4.Id, bl3.Id)
+        l1 = entities.Link(None,"Association", bl1.Id,bl2.Id)
+        l2 = entities.Link(None,"Include", bl4.Id,bl3.Id)
 
         self.addNewLink(l1, dia1.Id)
-        self.addNewLink(l2, dia1.Id)
-        self.addNewLink(l3, dia2.Id)
-
+        self.addNewLink(l2, dia2.Id)
+        
 
     def addNewProject(self, pr):
         with self.conn:
@@ -171,14 +179,16 @@ class DataBase():
             tmp = self.c.fetchall()
             res = []
             for elem in tmp:
-                res.append(Diagram(elem[0],elem[1],elem[2],elem[3],elem[4]))
+                res.append(entities.Diagram(elem[0],elem[1],elem[2],elem[3],elem[4]))
         return res
     
     def getDiagramsContent(self, dId):
         with self.conn:
             self.c.execute("SELECT d.dId, d.name, d.description, d.Type, d.mode FROM Diagrams d WHERE d.did = :dId", {"dId":dId})
             tmp = self.c.fetchone()
-            dia = Diagram(tmp[0],tmp[1],tmp[2],tmp[3],tmp[4])
+            if tmp is None:
+                return None
+            dia = entities.Diagram(tmp[0],tmp[1],tmp[2],tmp[3],tmp[4])
             dia.blocks = self.getBlocks(dId)
             dia.links = self.getLinks(dId)
         return dia
@@ -190,9 +200,11 @@ class DataBase():
             b.bId = db.bId and db.dId = :dId
             ''', {"dId": dId})
             tmp = self.c.fetchall()
+            if tmp is None:
+                return None
             res = []
             for elem in tmp:
-                res.append(Block(elem[0],elem[1],elem[2],elem[3],elem[4],elem[5],elem[6],elem[7],elem[8]))
+                res.append(entities.Block(elem[0],elem[1],elem[2],elem[3],elem[4],elem[5],elem[6],elem[7],elem[8]))
         return res
 
     def getLinks(self, dId):
@@ -201,9 +213,11 @@ class DataBase():
             INNER JOIN DiagramToLinks dl ON 
             l.lId = dl.lId and dl.dId = :dId''', {"dId":dId})
             tmp = self.c.fetchall()
+            if tmp is None:
+                return None
             res = []
             for elem in tmp:
-                res.append(Link(elem[0],elem[1],elem[2],elem[3]))
+                res.append(entities.Link(elem[0],elem[1],elem[2],elem[3]))
 
         return res
     
@@ -211,13 +225,15 @@ class DataBase():
         with self.conn:
             self.c.execute("SELECT * FROM Projects")
             tmp = self.c.fetchall()
+            if tmp is None:
+                return None
             res = []
             for elem in tmp:
-                res.append(Project(elem[0],elem[1],elem[2]))
+                res.append(entities.Project(elem[0],elem[1],elem[2]))
         return res
 
     # ОТЛИЧНЫЙ ПЛАН, НАДЕЖНЫЙ БЛЯТЬ КАК ШВЕЙЦАРСКИЕ ЧАСЫ
-    def modify(self, Table, newAttrs, Id):
+    def __modify(self, Table, newAttrs, Id):
         # we do need this shit because in each table the corresponding Id field 
         # starts with lowercased first letter of Table's name. dId for Diagrams, pId for Projects etc.
         if Table in ("Diagrams", "Links","Projects","Blocks"):
@@ -227,7 +243,7 @@ class DataBase():
         
         keys = newAttrs.keys()
         if "Id" in keys:
-            keys.pop("Id")
+            newAttrs.pop("Id")
         with self.conn:
             # I'm just to lazy to parse the entire json by myself. We're in python anyway
             for key in keys :
@@ -236,16 +252,21 @@ class DataBase():
         return True
 
     def modifyDiagram(self, newAttrs, Id):
-        return self.modify("Diagrams", newAttrs, Id)
+        return self.__modify("Diagrams", newAttrs, Id)
 
     def modifyBlock(self, newAttrs, Id):
-        return self.modify("Blocks", newAttrs, Id)
+        keys = newAttrs.keys()
+        if "coords" in keys:
+            newAttrs["x"]=newAttrs["coords"][0]
+            newAttrs["y"]=newAttrs["coords"][1]
+            newAttrs.pop("coords")
+        return self.__modify("Blocks", newAttrs, Id)
 
     def modifyLink(self, newAttrs, Id):
-        return self.modify("Links", newAttrs, Id)
+        return self.__modify("Links", newAttrs, Id)
 
     def modifyProject(self, newAttrs, Id):
-        return self.modify("Projects", newAttrs, Id)
+        return self.__modify("Projects", newAttrs, Id)
 
 
     def delete(self, Table, Id):
@@ -319,8 +340,11 @@ class DataBase():
             print("diagrams")
             self.c.execute("SELECT * FROM Diagrams")
             print(self.c.fetchall())
-
+            print("projects")
+            self.c.execute("SELECT * FROM Projects")
+            print(self.c.fetchall())
+            self.c.execute("SELECT * FROM ProjectToDiagrams")
+            print(self.c.fetchall())
 
 db = DataBase(DATABASEMODE.MEMORY)
-print(vars(db.getDiagramsContent(1).links[0]))
-#print(db.getLinks(1))
+db.modifyProject({'name':"pizdec"}, 1)

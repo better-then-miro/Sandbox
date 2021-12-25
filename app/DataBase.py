@@ -167,10 +167,21 @@ class DataBase():
         with self.conn:
             self.c.execute(''' SELECT d.dId, d.name, d.description, d.Type, d.mode FROM Diagrams d INNER JOIN ProjectToDiagrams pd ON
             d.dId = pd.dId and pd.pId = :pId
-
             ''', {"pId": pId})
-            res = self.c.fetchall()
+            tmp = self.c.fetchall()
+            res = []
+            for elem in tmp:
+                res.append(Diagram(elem[0],elem[1],elem[2],elem[3],elem[4]))
         return res
+    
+    def getDiagramsContent(self, dId):
+        with self.conn:
+            self.c.execute("SELECT d.dId, d.name, d.description, d.Type, d.mode FROM Diagrams d WHERE d.did = :dId", {"dId":dId})
+            tmp = self.c.fetchone()
+            dia = Diagram(tmp[0],tmp[1],tmp[2],tmp[3],tmp[4])
+            dia.blocks = self.getBlocks(dId)
+            dia.links = self.getLinks(dId)
+        return dia
 
     def getBlocks(self, dId):
         with self.conn:
@@ -178,15 +189,31 @@ class DataBase():
             FROM Blocks b INNER JOIN DiagramToBlocks db ON
             b.bId = db.bId and db.dId = :dId
             ''', {"dId": dId})
-            res = self.c.fetchall()
+            tmp = self.c.fetchall()
+            res = []
+            for elem in tmp:
+                res.append(Block(elem[0],elem[1],elem[2],elem[3],elem[4],elem[5],elem[6],elem[7],elem[8]))
         return res
 
     def getLinks(self, dId):
         with self.conn:
-            self.c.execute('''SELECT * FROM Links l
+            self.c.execute('''SELECT l.lId, l.type, l.sId, l.tId FROM Links l
             INNER JOIN DiagramToLinks dl ON 
             l.lId = dl.lId and dl.dId = :dId''', {"dId":dId})
-            res = self.c.fetchall()
+            tmp = self.c.fetchall()
+            res = []
+            for elem in tmp:
+                res.append(Link(elem[0],elem[1],elem[2],elem[3]))
+
+        return res
+    
+    def getProjects(self):
+        with self.conn:
+            self.c.execute("SELECT * FROM Projects")
+            tmp = self.c.fetchall()
+            res = []
+            for elem in tmp:
+                res.append(Project(elem[0],elem[1],elem[2]))
         return res
 
     # ОТЛИЧНЫЙ ПЛАН, НАДЕЖНЫЙ БЛЯТЬ КАК ШВЕЙЦАРСКИЕ ЧАСЫ
@@ -292,3 +319,8 @@ class DataBase():
             print("diagrams")
             self.c.execute("SELECT * FROM Diagrams")
             print(self.c.fetchall())
+
+
+db = DataBase(DATABASEMODE.MEMORY)
+print(vars(db.getDiagramsContent(1).links[0]))
+#print(db.getLinks(1))

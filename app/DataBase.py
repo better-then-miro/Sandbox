@@ -110,8 +110,16 @@ class DataBase():
         self.addNewDiagram(dia3,pr3.Id)
         self.addNewDiagram(dia4,pr1.Id)
 
-        bl1 = entities.Block(None,"Class",200,50,50,50)
-        bl2 = entities.Block(None,"Class",100,60,50,70)
+        bl1 = entities.Block(None,"Class",200,50,50,50, 'Controller', '', additionalFields=
+        {
+            'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId'],
+            'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)']
+        })
+        bl2 = entities.Block(None,"Class",100,60,50,70, 'Link', '', additionalFields=
+        {
+            'Attributes': ['lId', 'type', 'sourceId', 'targetId'],
+            'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)']
+        }),
         bl3 = entities.Block(None,"Class",300,40,100,70)
         bl4 = entities.Block(None,"Class",150,100,50,40)
         bl5 = entities.Block(None,"Use-case",100,200,60,100)
@@ -204,7 +212,7 @@ class DataBase():
                 return None
             res = []
             for elem in tmp:
-                res.append(entities.Block(elem[0],elem[1],elem[2],elem[3],elem[4],elem[5],elem[6],elem[7],elem[8]))
+                res.append(entities.Block(elem[0],elem[1],elem[2],elem[3],elem[4],elem[5],elem[6],elem[7], json.loads(elem[8])))
         return res
 
     def getLinks(self, dId):

@@ -12,6 +12,7 @@ c.execute('''CREATE TABLE Diagrams (
     name TEXT,
     description TEXT,
     Type TEXT,
+    mode TEXT,
     PRIMARY KEY (dId)
 )''')
 
@@ -73,14 +74,16 @@ conn.commit()
 pr1 = Project(None, "pr1","lol")
 pr2 = Project(None, "pr2","kek")
 
-dia1 = Diagram(None, "dia1", "suka", "Type")
-dia2 = Diagram(None, "dia2", "suka", "Type")
-dia3 = Diagram(None, "dia3", "suka", "Type")
-dia4 = Diagram(None, "dia4", "suka", "Type")
+dia1 = Diagram(None, "dia1", "suka", "Type", "mode")
+dia2 = Diagram(None, "dia2", "suka", "Type", "mode")
+dia3 = Diagram(None, "dia3", "suka", "Type", "mode")
+dia4 = Diagram(None, "dia4", "suka", "Type", "mode")
+
 bl1 = Block(None,"Class",200,50,50,50,additionalFields={"attrs":["private static int jopa","hui"],"methods":["int main()","void lel()"]})
 bl2 = Block(None,"Class",100,60,50,70)
 bl3 = Block(None,"Class",300,40,100,70)
 bl4 = Block(None,"Class",150,100,50,40)
+
 l1 = Link(0,"Association", 0,1)
 l2 = Link(1,"Association", 1,4)
 l3 = Link(2,"Association", 1,5)
@@ -94,7 +97,9 @@ def addNewProject(pr):
 
 def addNewDiagram(dia, pId):
     with conn:
-        c.execute("INSERT INTO Diagrams VALUES (NULL, :name, :description, :type)", {"name":dia.name, "description": dia.description, "type":dia.Type})
+        c.execute("INSERT INTO Diagrams VALUES (NULL, :name, :description, :type, :mode)", 
+        {"name":dia.name, "description": dia.description, "type":dia.Type, "mode":dia.mode})
+        
         key = c.lastrowid
         c.execute("INSERT INTO ProjectToDiagrams VALUES (:pId, :dId)", {"pId":pId, "dId": key})
     dia.Id = key
@@ -125,7 +130,7 @@ def addNewLink(link,dId):
 
 def getDiagrams(pId):
     with conn:
-        c.execute(''' SELECT d.dId, d.name, d.description, d.Type FROM Diagrams d INNER JOIN ProjectToDiagrams pd ON
+        c.execute(''' SELECT d.dId, d.name, d.description, d.Type, d.mode FROM Diagrams d INNER JOIN ProjectToDiagrams pd ON
         d.dId = pd.dId and pd.pId = :pId
 
         ''', {"pId": pId})
@@ -209,10 +214,10 @@ print(addNewLink(l3, dia2.Id))
 print(addNewLink(l4, dia1.Id))
 
 print("now res")
-modifyProject({"name":'bl1.Id',"description":"0"}, pr1.Id)
+modifyDiagram({"mode":'strict'}, dia1.Id)
 
 with conn:
-    c.execute("SELECT * FROM Projects WHERE pId = 1")
+    c.execute("SELECT * FROM Diagrams WHERE dId = 1")
     print(c.fetchall())
 
 conn.close()

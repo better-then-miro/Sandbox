@@ -315,6 +315,7 @@ class DataBase():
                 {"dId":Id}
             )
             self.c.execute("DELETE FROM Diagrams WHERE dId = :dId", {"dId":Id})
+        return True
 
     def deleteBlock(self, Id):
         with self.conn:

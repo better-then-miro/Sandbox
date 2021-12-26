@@ -119,6 +119,46 @@ def createNewLink():
             return jsonify({"lId":lId})
     return Response(status = 422)
 
+@app.route("/deleteBlock", methods = ["DELETE","GET"] )
+def deleteBlock():
+    if request.method == 'DELETE':
+        res = DB.deleteBlock(content = request.json)
+    elif request.method == "GET":
+        res = DB.deleteBlock(bId = request.args.get("Id"))
+    if res:
+        return jsonify(success = True)
+    return Response(status = 422)
+
+@app.route("/deleteLink", methods = ["DELETE","GET"] )
+def deleteLink():
+    if request.method == 'DELETE':
+        res = DB.deleteLink(content = request.json)
+    elif request.method == "GET":
+        res = DB.deleteLink(lId = request.args.get("Id"))
+    if res:
+        return jsonify(success = True)
+    return Response(status = 422)
+
+@app.route("/deleteDiagram", methods = ["DELETE","GET"] )
+def deleteDiagram():
+    if request.method == 'DELETE':
+        res = DB.deleteDiagram(content = request.json)
+    elif request.method == "GET":
+        res = DB.deleteDiagram(dId = request.args.get("Id"))
+    if res:
+        return jsonify(success = True)
+    return Response(status = 422)
+
+@app.route("/deleteProject", methods = ["DELETE","GET"] )
+def deleteProject():
+    if request.method == 'DELETE':
+        res = DB.deleteProject(content = request.json)
+    elif request.method == "GET":
+        res = DB.deleteProject(pId = request.args.get("Id"))
+    if res:
+        return jsonify(success = True)
+    return Response(status = 422)
+
 # legacy
 @app.route("/example3", methods = ['GET','POST'])
 def example3():

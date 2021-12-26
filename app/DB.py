@@ -136,3 +136,66 @@ def addLink(content):
         return None 
     return database.addNewLink(entities.Link(None, Type, sId, tId),dId)
     
+
+def deleteBlock(content = None, bId = None):
+    if content is not None and "Id" in content.keys():
+        Id = content["Id"]
+    elif bId is not None:
+        Id = bId
+    else:
+        return False
+    try :
+        Id = int(Id)
+    except:
+        return False
+
+    res = database.deleteBlock(Id)
+    database.debug()
+    return res
+    
+
+def deleteLink(content = None, lId = None):
+    if content is not None and "Id" in content.keys():
+        Id = content["Id"]
+    elif lId is not None:
+        Id = lId
+    else:
+        return False
+
+    try :
+        Id = int(Id)
+    except:
+        return False
+    res = database.deleteLink(Id)
+    database.debug()
+    return res
+
+def deleteDiagram(content = None, dId = None):
+    if content is not None and "Id" in content.keys():
+        Id = content["Id"]
+    elif dId is not None:
+        Id = dId
+    else:
+        return False
+    try :
+        Id = int(Id)
+    except:
+        return False
+    res = database.deleteDiagram(Id)
+    database.debug()
+    return res
+
+def deleteProject(content = None, pId = None):
+    if content is not None and "Id" in content.keys():
+        Id = content["Id"]
+    elif pId is not None:
+        Id = pId
+    else:
+        return False
+    try :
+        Id = int(Id)
+    except:
+        return False
+    res = database.deleteProject(Id)
+    database.debug()
+    return res

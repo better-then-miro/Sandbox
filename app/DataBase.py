@@ -120,8 +120,16 @@ class DataBase():
             'Attributes': ['lId', 'type', 'sourceId', 'targetId'],
             'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)']
         })
-        bl3 = entities.Block(None,"Class",300,40,100,70)
-        bl4 = entities.Block(None,"Class",150,100,50,40)
+        bl3 = entities.Block(None,"Class",300,40,100,70, additionalFields=
+        {
+            'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId'],
+            'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)']
+        })
+        bl4 = entities.Block(None,"Class",150,100,50,40, additionalFields=
+        {
+            'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId'],
+            'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)']
+        })
         bl5 = entities.Block(None,"Use-case",100,200,60,100)
         bl6 = entities.Block(None,"Use-case",200,250,100,100)
 

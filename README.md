@@ -1,3 +1,3 @@
 main repo for third year project 
 
-![zavod](./docs/zavod.png)
+![zavod](./docs/zavod.jpg)

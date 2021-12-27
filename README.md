@@ -1,3 +1,3 @@
 main repo for third year project 
 
-![scheme](./app/docs/zavod.png)
+![zavod](./app/docs/zavod.png)

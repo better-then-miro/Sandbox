@@ -8,8 +8,22 @@ class DATABASEMODE(Enum):
     MEMORY = 1
     DISK = 2
 
+class SingletonViolationException(Exception):
+    def __init__(self, message):
+        self.message = message
+    def __str__(self):
+        return self.message
 
-class DataBase():
+class Singleton(type):
+    __instances = {}
+    def __call__(Class, *args,**kwargs):
+        if not Class.__instances:
+            Class.__instances[Class] = super(Singleton,Class).__call__(*args, *(kwargs))
+        else:
+            raise SingletonViolationException("Second instance of Database is not allowed")
+        return Class.__instances[Class]
+
+class DataBase(metaclass = Singleton):
     def __init__(self, mode, isInited = True, path = "", isDebug = False):
         if mode == DATABASEMODE.MEMORY:
             self.conn = sql.connect(":memory:",check_same_thread=False)

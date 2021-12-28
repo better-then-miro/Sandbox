@@ -127,22 +127,26 @@ class DataBase(metaclass = Singleton):
         bl1 = entities.Block(None,"Class",200,50,50,50, 'Controller', '', additionalFields=
         {
             'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId'],
-            'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)']
+            'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)'],
+            'stereotype': 'Boundary'
         })
         bl2 = entities.Block(None,"Class",100,60,50,70, 'Link', '', additionalFields=
         {
             'Attributes': ['lId', 'type', 'sourceId', 'targetId'],
-            'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)']
+            'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)'],
+            'stereotype': 'Control'
         })
         bl3 = entities.Block(None,"Class",300,40,100,70, additionalFields=
         {
             'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId'],
-            'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)']
+            'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)'],
+            'stereotype': ''
         })
         bl4 = entities.Block(None,"Class",150,100,50,40, additionalFields=
         {
             'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId'],
-            'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)']
+            'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)'],
+            'stereotype': ''
         })
         bl5 = entities.Block(None,"Use-case",100,200,60,100)
         bl6 = entities.Block(None,"Use-case",200,250,100,100)

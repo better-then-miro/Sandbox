@@ -18,7 +18,7 @@ class Singleton(type):
     __instances = {}
     def __call__(Class, *args,**kwargs):
         if not Class.__instances:
-            Class.__instances[Class] = super(Singleton,Class).__call__(*args, *(kwargs))
+            Class.__instances[Class] = super(Singleton,Class).__call__(*args, **kwargs)
         else:
             raise SingletonViolationException("Second instance of Database is not allowed")
         return Class.__instances[Class]

@@ -17,7 +17,7 @@ class SingletonViolationException(Exception):
 class Singleton(type):
     __instances = {}
     def __call__(Class, *args,**kwargs):
-        if not Class.__instances:
+        if Class not in Class.__instances:
             Class.__instances[Class] = super(Singleton,Class).__call__(*args, **kwargs)
         else:
             raise SingletonViolationException("Second instance of Database is not allowed")
@@ -262,7 +262,7 @@ class DataBase(metaclass = Singleton):
                 res.append(entities.Project(elem[0],elem[1],elem[2]))
         return res
 
-    # ОТЛИЧНЫЙ ПЛАН, НАДЕЖНЫЙ БЛЯТЬ КАК ШВЕЙЦАРСКИЕ ЧАСЫ
+    # ОТЛИЧНЫЙ ПЛАН, НАДЕЖНЫЙ КАК ШВЕЙЦАРСКИЕ ЧАСЫ
     def __modify(self, Table, newAttrs, Id):
         # we do need this shit because in each table the corresponding Id field 
         # starts with lowercased first letter of Table's name. dId for Diagrams, pId for Projects etc.

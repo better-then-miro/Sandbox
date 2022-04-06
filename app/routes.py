@@ -1,4 +1,4 @@
-from app import app, socketio, DB
+from app import app, socketio, ServerController
 from flask import render_template, request, jsonify, Response
 from flask_socketio import emit
 
@@ -18,14 +18,14 @@ def example2():
 @app.route("/getProjectList", methods = ['GET'])
 def getProjectList():
     return jsonify(
-        [project.serialize() for project in DB.getProjects()]
+        [project.serialize() for project in ServerController.getProjects()]
     )
 
 @app.route("/getDiagrams", methods = ['GET'])
 def getDiagrams():
     pId = request.args.get("Id")
     if pId is not None:
-        dias = DB.getDiagramsByProject(pId)
+        dias = ServerController.getDiagramsByProject(pId)
         if dias is not None:
             return jsonify(
                 [dia.serializeInfo() for dia in dias]
@@ -37,7 +37,7 @@ def getDiagrams():
 def getDiagramContent():
     dId = request.args.get("Id")
     if dId is not None:
-        dia = DB.getDiagramContentByDID(dId)
+        dia = ServerController.getDiagramContentByDID(dId)
         if dia is not None:
             return jsonify(
                 dia.serializeContent()
@@ -50,7 +50,7 @@ def getDiagramContent():
 @app.route("/updateBlockProperties", methods = ['POST'])
 def updateBlockProperties():
     content = request.json
-    if content is not None and DB.modifyBlockById(content):
+    if content is not None and ServerController.modifyBlockById(content):
         return jsonify(success = True)
     else:
         return Response(status = 422)
@@ -58,7 +58,7 @@ def updateBlockProperties():
 @app.route("/updateDiagramProperties", methods = ['POST'])
 def updateDiagramProperties():
     content = request.json
-    if content is not None and DB.modifyDiagramById(content):
+    if content is not None and ServerController.modifyDiagramById(content):
         return jsonify(success = True)
     else:
         return Response(status = 422)
@@ -66,7 +66,7 @@ def updateDiagramProperties():
 @app.route("/updateProjectProperties", methods = ['POST'])
 def updateProjectProperties():
     content = request.json
-    if content is not None and DB.modifyProjectById(content):
+    if content is not None and ServerController.modifyProjectById(content):
         return jsonify(success = True)
     else:
         return Response(status = 422)      
@@ -74,7 +74,7 @@ def updateProjectProperties():
 @app.route("/updateLinkProperties", methods = ['POST'])
 def modifyLinkById():
     content = request.json
-    if content is not None and DB.modifyLinkById(content):
+    if content is not None and ServerController.modifyLinkById(content):
         return jsonify(success = True)
     else:
         return Response(status = 422)     
@@ -84,7 +84,7 @@ def modifyLinkById():
 def createNewProject():
     content = request.json
     if content is not None:
-        return jsonify( {"pId" : DB.addProject(content)})
+        return jsonify( {"pId" : ServerController.addProject(content)})
     else:
         return Response( status = 422 )
 
@@ -93,7 +93,7 @@ def createNewDiagram():
     content = request.json
     
     if content is not None:
-        dId = DB.addDiagram(content)
+        dId = ServerController.addDiagram(content)
         if dId is not None:
             return jsonify({"dId": dId})    
     return Response(status = 422)
@@ -103,7 +103,7 @@ def createNewBlock():
     content = request.json
     
     if content is not None:
-        bId = DB.addBlock(content)
+        bId = ServerController.addBlock(content)
         if bId is not None:
             return jsonify({"bId":bId})
     return Response(status = 422)
@@ -114,7 +114,7 @@ def createNewLink():
     content = request.json
     
     if content is not None:
-        lId = DB.addLink(content)
+        lId = ServerController.addLink(content)
         if lId is not None:
             return jsonify({"lId":lId})
     return Response(status = 422)
@@ -122,9 +122,9 @@ def createNewLink():
 @app.route("/deleteBlock", methods = ["DELETE","GET"] )
 def deleteBlock():
     if request.method == 'DELETE':
-        res = DB.deleteBlock(content = request.json)
+        res = ServerController.deleteBlock(content = request.json)
     elif request.method == "GET":
-        res = DB.deleteBlock(bId = request.args.get("Id"))
+        res = ServerController.deleteBlock(bId = request.args.get("Id"))
     if res:
         return jsonify(success = True)
     return Response(status = 422)
@@ -132,9 +132,9 @@ def deleteBlock():
 @app.route("/deleteLink", methods = ["DELETE","GET"] )
 def deleteLink():
     if request.method == 'DELETE':
-        res = DB.deleteLink(content = request.json)
+        res = ServerController.deleteLink(content = request.json)
     elif request.method == "GET":
-        res = DB.deleteLink(lId = request.args.get("Id"))
+        res = ServerController.deleteLink(lId = request.args.get("Id"))
     if res:
         return jsonify(success = True)
     return Response(status = 422)
@@ -142,9 +142,9 @@ def deleteLink():
 @app.route("/deleteDiagram", methods = ["DELETE","GET"] )
 def deleteDiagram():
     if request.method == 'DELETE':
-        res = DB.deleteDiagram(content = request.json)
+        res = ServerController.deleteDiagram(content = request.json)
     elif request.method == "GET":
-        res = DB.deleteDiagram(dId = request.args.get("Id"))
+        res = ServerController.deleteDiagram(dId = request.args.get("Id"))
     if res:
         return jsonify(success = True)
     return Response(status = 422)
@@ -152,9 +152,9 @@ def deleteDiagram():
 @app.route("/deleteProject", methods = ["DELETE","GET"] )
 def deleteProject():
     if request.method == 'DELETE':
-        res = DB.deleteProject(content = request.json)
+        res = ServerController.deleteProject(content = request.json)
     elif request.method == "GET":
-        res = DB.deleteProject(pId = request.args.get("Id"))
+        res = ServerController.deleteProject(pId = request.args.get("Id"))
     if res:
         return jsonify(success = True)
     return Response(status = 422)

@@ -35,8 +35,8 @@ def getDiagrams():
 
 
 @socketio.on("getDiagramContent", namespace="/main")
-def getDiagramContent():
-    dId = request.args.get("Id")
+def getDiagramContent(content):
+    dId = content["Id"]
     if dId is not None:
         dia = ServerController.getDiagramContentByDID(dId)
         #TODO we kinda want to add user to room here

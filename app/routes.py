@@ -42,8 +42,8 @@ def getDiagramContent(content):
             res = dia.serializeContent()
             res["code"] = 200
             emit("getDiagramContentHandler", res)
-
-    return emit("getDiagramContentHandler", {"code":422})
+    else:
+        emit("getDiagramContentHandler", {"code":422})
 
 #возможно все 4 запроса могут быть одним 
 #и нам достаточно указывать тип модифицируемого объекта

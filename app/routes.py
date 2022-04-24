@@ -1,7 +1,7 @@
 from app import app, socketio, ServerController
 from flask import render_template, request, jsonify, Response
 from flask_socketio import emit
-
+import json
 
 posts = []
 
@@ -41,7 +41,7 @@ def getDiagramContent(content):
         dia = ServerController.getDiagramContentByDID(dId)
         #TODO we kinda want to add user to room here
         if dia is not None:
-            emit("getDiagramContentHandler", jsonify(
+            emit("getDiagramContentHandler", json.dumps(
                 dia.serializeContent()
             ))
 

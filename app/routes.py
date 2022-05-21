@@ -54,11 +54,14 @@ def getDiagramContent(content):
 def updateBlockProperties(content):
     if content is not None :
         Id = ServerController.getDiagramId(content)
+        copy = content.copy()
         if Id is not None and ServerController.modifyBlockById(content):
-            emit("updateBlockTextPropertiesHandler", {"code": 200}, to = Id)
+            emit("updatePropertiesHandler", {"code": 200})
+            copy["code"] = 200
+            emit("updatePropertiesHandler", copy, to = Id)
     #TODO figure out what we are supposed to send here
     else:
-        emit("updateBlockPropertiesHandler", {"code": 422})
+        emit("updatePropertiesHandler", {"code": 422})
     
 @socketio.on("updateLinkProperties", namespace= "/main")
 def modifyLinkById(content):
@@ -108,7 +111,10 @@ def createNewBlock(content):
     if content is not None:
         bId = ServerController.addBlock(content)
         if bId is not None:
+            dId = ServerController.database.getDiagramFromBlock(bId)
             emit('createNewBlockHandler', {"code":200, "bId":bId})
+            content["Id"] = bId
+            emit('spawnNewBlockHandler', content, to = dId)
     else:
         emit('createNewBlockHandler', {"code":422})
     

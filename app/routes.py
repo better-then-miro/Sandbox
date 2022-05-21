@@ -1,6 +1,7 @@
 from app import app, socketio, ServerController
 from flask import render_template, request, jsonify, Response
-from flask_socketio import emit
+from flask_socketio import emit, join_room, leave_room
+
 
 
 @app.route("/")
@@ -41,6 +42,8 @@ def getDiagramContent(content):
         if dia is not None:
             res = dia.serializeContent()
             res["code"] = 200
+            join_room(dia.Id)
+            print("joint to ",dia.Id)
             emit("getDiagramContentHandler", res)
     else:
         emit("getDiagramContentHandler", {"code":422})
@@ -49,8 +52,10 @@ def getDiagramContent(content):
 #и нам достаточно указывать тип модифицируемого объекта
 @socketio.on("updateBlockProperties", namespace="/main")
 def updateBlockProperties(content):
-    if content is not None and ServerController.modifyBlockById(content):
-        emit("updateBlockPropertiesHandler", {"code": 200})
+    if content is not None :
+        Id = ServerController.getDiagramId(content)
+        if Id is not None and ServerController.modifyBlockById(content):
+            emit("updateBlockTextPropertiesHandler", {"code": 200}, to = Id)
     #TODO figure out what we are supposed to send here
     else:
         emit("updateBlockPropertiesHandler", {"code": 422})

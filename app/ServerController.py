@@ -28,6 +28,17 @@ def getDiagramContentByDID(dId):
         return None
     return database.getDiagramsContent(dId)
 
+def getDiagramId(content):
+    if "Id" in content.keys():
+        try:
+            print(content["Id"])
+            bId = int( content["Id"])
+            print("bid",bId)
+            return database.getDiagramFromBlock(bId)
+        except ValueError:
+            return None
+    return None        
+
 def modifyBlockById(content):
     if "Id" in content.keys():
         try:

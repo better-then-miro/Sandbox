@@ -216,6 +216,12 @@ class DataBase(metaclass = Singleton):
                 res.append(entities.Diagram(elem[0],elem[1],elem[2],elem[3],elem[4]))
         return res
     
+    def getDiagramFromBlock(self, bId):
+        with self.conn:
+            self.c.execute("SELECT d.dId FROM DiagramToBlocks d WHERE d.bId = :bb", {"bb":bId})
+            res = self.c.fetchone()
+            return res[0] 
+
     def getDiagramsContent(self, dId):
         with self.conn:
             self.c.execute("SELECT d.dId, d.name, d.description, d.Type, d.mode FROM Diagrams d WHERE d.did = :dId", {"dId":dId})

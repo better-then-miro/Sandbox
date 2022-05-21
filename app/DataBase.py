@@ -128,13 +128,13 @@ class DataBase(metaclass = Singleton):
         {
             'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId'],
             'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)'],
-            'stereotype': 'Boundary'
+            'stereotype': ''
         })
         bl2 = entities.Block(None,"Class",100,60,50,70, 'Link', '', additionalFields=
         {
             'Attributes': ['lId', 'type', 'sourceId', 'targetId'],
             'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)'],
-            'stereotype': 'Control'
+            'stereotype': ''
         })
         bl3 = entities.Block(None,"Class",300,40,100,70, additionalFields=
         {

@@ -220,8 +220,17 @@ class DataBase(metaclass = Singleton):
         with self.conn:
             self.c.execute("SELECT d.dId FROM DiagramToBlocks d WHERE d.bId = :bb", {"bb":bId})
             res = self.c.fetchone()
-            return res[0] 
-
+            if res is not None:
+                res = res[0]
+            return res
+    def getDiagramFromLink(self, lId):
+        with self.conn:
+            self.c.execute("SELECT dId from DiagramToLinks WHERE lid = :l", {"l":lId})
+            res = self.c.fetchone()
+            if res is not None:
+                res = res[0]
+            return res
+    
     def getDiagramsContent(self, dId):
         with self.conn:
             self.c.execute("SELECT d.dId, d.name, d.description, d.Type, d.mode FROM Diagrams d WHERE d.did = :dId", {"dId":dId})

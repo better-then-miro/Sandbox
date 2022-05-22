@@ -123,7 +123,10 @@ def createNewLink(content):
     if content is not None:
         lId = ServerController.addLink(content)
         if lId is not None:
+            dId = ServerController.database.getDiagramFromLink(lId)
             emit('createNewLinkHandler', {"code":200, "lId":lId})
+            content["Id"] = lId
+            emit("spawnNewLinkHandler", content, to=dId)
     else:
         emit('createNewLinkHandler', {"code":422})
     

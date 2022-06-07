@@ -132,17 +132,20 @@ def createNewLink(content):
     
 @socketio.on("deleteBlock", namespace = '/main')
 def deleteBlock(content):
+    dId = ServerController.database.getDiagramFromBlock(content['Id'])
     res = ServerController.deleteBlock(content)
     if res:
-        emit('deleteBlockHandler', {"code":200})
+        emit('deleteBlockHandler', {"code":200, 'bId':content['Id']}, to=dId)
     else:
         emit('deleteBlockHandler', {"code":422})
 
 @socketio.on("deleteLink", namespace = '/main')
 def deleteLink(content):
+    dId = ServerController.database.getDiagramFromLink(content['Id'])
     res = ServerController.deleteLink(content)
     if res:
-        emit('deleteLinkHandler', {"code":200})
+        print(content)
+        emit('deleteLinkHandler', {"code":200, 'lId':content['Id']}, to=dId)
     else:
         emit('deleteLinkHandler', {"code":422})
     

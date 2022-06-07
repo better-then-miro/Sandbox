@@ -108,63 +108,82 @@ class DataBase(metaclass = Singleton):
         self.conn.commit()
 
     def __debugFill(self):
-        pr1 = entities.Project(None, "test 0","Project 0" )
-        pr2 = entities.Project(None, "test 1","Project 1" )
-        pr3 = entities.Project(None, "test 2","Project 2" )
+        pr1 = entities.Project(None, "Main project", "Project description")
+        pr2 = entities.Project(None, "Additional project", "Project description")
         self.addNewProject(pr1)
         self.addNewProject(pr2)
-        self.addNewProject(pr3)
 
-        dia1 = entities.Diagram(None, "Diagram 0", "-","use-case","Strict")
-        dia2 = entities.Diagram(None, "Diagram 1", "-","use-case","Strict")
-        dia3 = entities.Diagram(None, "Diagram 2", "-","use-case","Free")
-        dia4 = entities.Diagram(None, "Diagram 3", "-","use-case","Free")
+        dia1 = entities.Diagram(None, "Use-case diagram", "Application use-cases", "use-case", "Strict")
+        dia2 = entities.Diagram(None, "Class diagram", "Application classes", "class", "Strict")
+        dia3 = entities.Diagram(None, "Free diagram", "Diagram with no limitations", "use-case", "Free")
         self.addNewDiagram(dia1,pr1.Id)
-        self.addNewDiagram(dia2,pr2.Id)
-        self.addNewDiagram(dia3,pr3.Id)
-        self.addNewDiagram(dia4,pr1.Id)
+        self.addNewDiagram(dia2,pr1.Id)
+        self.addNewDiagram(dia3,pr1.Id)
 
-        bl1 = entities.Block(None,"Class",200,50,50,50, 'Controller', '', additionalFields=
+        d1_bl1 = entities.Block(None,"Use-case",250,200,150,75, title='Drive the venicle', description='description')
+        d1_bl2 = entities.Block(None,"Use-case",500,100,150,75, title='Start the venicle', description='description')
+        d1_bl3 = entities.Block(None,"Use-case",250,400,150,75, title='Park', description='description')
+        d1_bl4 = entities.Block(None,"Use-case",500,300,150,75, title='Brake', description='description')
+        d1_bl5 = entities.Block(None,"Actor",50,200,100,150)
+
+        d2_bl1 = entities.Block(None,"Class",400,50,200,200, 'Controller', '', additionalFields=
         {
             'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId'],
             'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)'],
             'stereotype': ''
         })
-        bl2 = entities.Block(None,"Class",100,60,50,70, 'Link', '', additionalFields=
+        d2_bl2 = entities.Block(None,"Class",50,60,200,200, 'Link', '', additionalFields=
         {
             'Attributes': ['lId', 'type', 'sourceId', 'targetId'],
             'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)'],
             'stereotype': ''
         })
-        bl3 = entities.Block(None,"Class",300,40,100,70, additionalFields=
+        d2_bl3 = entities.Block(None,"Class",100,500,200,200, additionalFields=
         {
             'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId'],
             'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)'],
             'stereotype': ''
         })
-        bl4 = entities.Block(None,"Class",150,100,50,40, additionalFields=
+        d2_bl4 = entities.Block(None,"Class",500,400,200,200, additionalFields=
         {
             'Attributes': ['linkType', 'sourceeLinkId', 'targetLinkId'],
             'Operations': ['AddNewBlock(blockId)', 'AddNewLink(linkId)'],
             'stereotype': ''
         })
-        bl5 = entities.Block(None,"Use-case",100,200,60,100)
-        bl6 = entities.Block(None,"Use-case",200,250,100,100)
 
 
-        self.addNewBlock(bl1,dia1.Id)
-        self.addNewBlock(bl2,dia1.Id)
-        self.addNewBlock(bl3,dia2.Id)
-        self.addNewBlock(bl4,dia2.Id)
-        self.addNewBlock(bl5,dia1.Id)
-        self.addNewBlock(bl6,dia1.Id)
+        self.addNewBlock(d1_bl1, dia1.Id)
+        self.addNewBlock(d1_bl2, dia1.Id)
+        self.addNewBlock(d1_bl3, dia1.Id)
+        self.addNewBlock(d1_bl4, dia1.Id)
+        self.addNewBlock(d1_bl5, dia1.Id)
 
-        l1 = entities.Link(None,"Association", bl1.Id,bl2.Id)
-        l2 = entities.Link(None,"Include", bl4.Id,bl3.Id)
+        self.addNewBlock(d2_bl1,dia2.Id)
+        self.addNewBlock(d2_bl2,dia2.Id)
+        self.addNewBlock(d2_bl3,dia2.Id)
+        self.addNewBlock(d2_bl4,dia2.Id)
 
-        self.addNewLink(l1, dia1.Id)
-        self.addNewLink(l2, dia2.Id)
-        
+        d1_l1 = entities.Link(None,"Dependency", d1_bl2.Id,d1_bl1.Id)
+        d1_l2 = entities.Link(None,"Association(Bidirectional)", d1_bl5.Id,d1_bl1.Id)
+        d1_l3 = entities.Link(None,"Dependency", d1_bl1.Id,d1_bl4.Id)
+        d1_l4 = entities.Link(None,"Dependency", d1_bl3.Id,d1_bl4.Id)
+        d1_l5 = entities.Link(None,"Association(Bidirectional)", d1_bl5.Id,d1_bl3.Id)
+
+        d2_l1 = entities.Link(None,"Include", d2_bl2.Id,d2_bl1.Id)
+        d2_l2 = entities.Link(None,"Association", d2_bl2.Id,d2_bl3.Id)
+        d2_l3 = entities.Link(None,"Dependency", d2_bl1.Id,d2_bl3.Id)
+        d2_l4 = entities.Link(None,"Dependency", d2_bl1.Id,d2_bl4.Id)
+
+        self.addNewLink(d1_l1, dia1.Id)
+        self.addNewLink(d1_l2, dia1.Id)
+        self.addNewLink(d1_l3, dia1.Id)
+        self.addNewLink(d1_l4, dia1.Id)
+        self.addNewLink(d1_l5, dia1.Id)
+
+        self.addNewLink(d2_l1, dia2.Id)
+        self.addNewLink(d2_l2, dia2.Id)   
+        self.addNewLink(d2_l3, dia2.Id)   
+        self.addNewLink(d2_l4, dia2.Id)        
 
     def addNewProject(self, pr):
         with self.conn:

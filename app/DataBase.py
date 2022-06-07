@@ -190,7 +190,7 @@ class DataBase(metaclass = Singleton):
         params.pop("Id")
         params["additionalFields"] = json.dumps(block.additionalFields)
         with self.conn:
-            self.c.execute('''INSERT INTO Blocks VALUES (NULL, :Type, :x, :y, :width, :height, :description, :title, :additionalFields)''', params)
+            self.c.execute('''INSERT INTO Blocks VALUES (NULL, :Type, :x, :y, :width, :height, :title, :description, :additionalFields)''', params)
             block.Id = self.c.lastrowid
             self.c.execute("INSERT INTO DiagramToBlocks VALUES (:dId, :bId)", {"dId":dId, "bId":block.Id})
         return block.Id

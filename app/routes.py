@@ -1,9 +1,8 @@
 from app import app, socketio, ServerController
 from flask import render_template, request, jsonify, Response
-from flask_socketio import emit
+from flask_socketio import emit, join_room, leave_room
 
 
-posts = []
 
 @app.route("/")
 @app.route("/index")
@@ -33,27 +32,44 @@ def getDiagrams():
     
     return Response(status=422)
 
-@app.route("/getDiagramContent", methods = ['GET'])
-def getDiagramContent():
-    dId = request.args.get("Id")
+
+@socketio.on("getDiagramContent", namespace="/main")
+def getDiagramContent(content):
+    dId = content["Id"]
     if dId is not None:
         dia = ServerController.getDiagramContentByDID(dId)
+        #TODO we kinda want to add user to room here
         if dia is not None:
-            return jsonify(
-                dia.serializeContent()
-            )
-
-    return Response(status=422)
+            res = dia.serializeContent()
+            res["code"] = 200
+            join_room(dia.Id)
+            print("joint to ",dia.Id)
+            emit("getDiagramContentHandler", res)
+    else:
+        emit("getDiagramContentHandler", {"code":422})
 
 #возможно все 4 запроса могут быть одним 
 #и нам достаточно указывать тип модифицируемого объекта
-@app.route("/updateBlockProperties", methods = ['POST'])
-def updateBlockProperties():
-    content = request.json
-    if content is not None and ServerController.modifyBlockById(content):
-        return jsonify(success = True)
+@socketio.on("updateBlockProperties", namespace="/main")
+def updateBlockProperties(content):
+    if content is not None :
+        Id = ServerController.getDiagramId(content)
+        copy = content.copy()
+        if Id is not None and ServerController.modifyBlockById(content):
+            emit("updatePropertiesHandler", {"code": 200})
+            copy["code"] = 200
+            emit("updatePropertiesHandler", copy, to = Id)
+    #TODO figure out what we are supposed to send here
     else:
-        return Response(status = 422)
+        emit("updatePropertiesHandler", {"code": 422})
+    
+@socketio.on("updateLinkProperties", namespace= "/main")
+def modifyLinkById(content):
+    if content is not None and ServerController.modifyLinkById(content):
+        emit("updateLinkPropertiesHandler", {"code": 200})
+    else:
+        emit("updateLinkPropertiesHandler", {"code": 422})
+    
 
 @app.route("/updateDiagramProperties", methods = ['POST'])
 def updateDiagramProperties():
@@ -70,14 +86,6 @@ def updateProjectProperties():
         return jsonify(success = True)
     else:
         return Response(status = 422)      
-
-@app.route("/updateLinkProperties", methods = ['POST'])
-def modifyLinkById():
-    content = request.json
-    if content is not None and ServerController.modifyLinkById(content):
-        return jsonify(success = True)
-    else:
-        return Response(status = 422)     
 
 
 @app.route("/createNewProject", methods = ['POST'])
@@ -98,47 +106,49 @@ def createNewDiagram():
             return jsonify({"dId": dId})    
     return Response(status = 422)
 
-@app.route("/createNewBlock",methods = ["POST"])
-def createNewBlock():
-    content = request.json
-    
+@socketio.on("createNewBlock", namespace = '/main')
+def createNewBlock(content):
     if content is not None:
         bId = ServerController.addBlock(content)
         if bId is not None:
-            return jsonify({"bId":bId})
-    return Response(status = 422)
-
-
-@app.route("/createNewLink",methods = ["POST"])
-def createNewLink():
-    content = request.json
+            dId = ServerController.database.getDiagramFromBlock(bId)
+            emit('createNewBlockHandler', {"code":200, "bId":bId})
+            content["Id"] = bId
+            emit('spawnNewBlockHandler', content, to = dId)
+    else:
+        emit('createNewBlockHandler', {"code":422})
     
+@socketio.on("createNewLink", namespace = '/main')
+def createNewLink(content):
     if content is not None:
         lId = ServerController.addLink(content)
         if lId is not None:
-            return jsonify({"lId":lId})
-    return Response(status = 422)
-
-@app.route("/deleteBlock", methods = ["DELETE","GET"] )
-def deleteBlock():
-    if request.method == 'DELETE':
-        res = ServerController.deleteBlock(content = request.json)
-    elif request.method == "GET":
-        res = ServerController.deleteBlock(bId = request.args.get("Id"))
+            dId = ServerController.database.getDiagramFromLink(lId)
+            emit('createNewLinkHandler', {"code":200, "lId":lId})
+            content["Id"] = lId
+            emit("spawnNewLinkHandler", content, to=dId)
+    else:
+        emit('createNewLinkHandler', {"code":422})
+    
+@socketio.on("deleteBlock", namespace = '/main')
+def deleteBlock(content):
+    dId = ServerController.database.getDiagramFromBlock(content['Id'])
+    res = ServerController.deleteBlock(content)
     if res:
-        return jsonify(success = True)
-    return Response(status = 422)
+        emit('deleteBlockHandler', {"code":200, 'bId':content['Id']}, to=dId)
+    else:
+        emit('deleteBlockHandler', {"code":422})
 
-@app.route("/deleteLink", methods = ["DELETE","GET"] )
-def deleteLink():
-    if request.method == 'DELETE':
-        res = ServerController.deleteLink(content = request.json)
-    elif request.method == "GET":
-        res = ServerController.deleteLink(lId = request.args.get("Id"))
+@socketio.on("deleteLink", namespace = '/main')
+def deleteLink(content):
+    dId = ServerController.database.getDiagramFromLink(content['Id'])
+    res = ServerController.deleteLink(content)
     if res:
-        return jsonify(success = True)
-    return Response(status = 422)
-
+        print(content)
+        emit('deleteLinkHandler', {"code":200, 'lId':content['Id']}, to=dId)
+    else:
+        emit('deleteLinkHandler', {"code":422})
+    
 @app.route("/deleteDiagram", methods = ["DELETE","GET"] )
 def deleteDiagram():
     if request.method == 'DELETE':

@@ -82,7 +82,6 @@ def modifyLinkById(content):
     else:
         emit("updateLinkPropertiesHandler", {"code": 422})
     
-
 @app.route("/updateDiagramProperties", methods = ['POST'])
 def updateDiagramProperties():
     content = request.json
@@ -126,6 +125,8 @@ def createNewBlock(content):
             dId = ServerController.database.getDiagramFromBlock(bId)
             emit('createNewBlockHandler', {"code":200, "bId":bId})
             content["Id"] = bId
+            diagramVersions[dId] += 1
+            content["version"] = diagramVersions[dId]
             emit('spawnNewBlockHandler', content, to = dId)
     else:
         emit('createNewBlockHandler', {"code":422})
@@ -138,6 +139,8 @@ def createNewLink(content):
             dId = ServerController.database.getDiagramFromLink(lId)
             emit('createNewLinkHandler', {"code":200, "lId":lId})
             content["Id"] = lId
+            diagramVersions[dId] += 1
+            content["version"] = diagramVersions[dId]
             emit("spawnNewLinkHandler", content, to=dId)
     else:
         emit('createNewLinkHandler', {"code":422})
@@ -147,7 +150,8 @@ def deleteBlock(content):
     dId = ServerController.database.getDiagramFromBlock(content['Id'])
     res = ServerController.deleteBlock(content)
     if res:
-        emit('deleteBlockHandler', {"code":200, 'bId':content['Id']}, to=dId)
+        diagramVersions[dId] += 1
+        emit('deleteBlockHandler', {"code":200, 'bId':content['Id'], "version":diagramVersions[dId]}, to=dId)
     else:
         emit('deleteBlockHandler', {"code":422})
 
@@ -156,8 +160,8 @@ def deleteLink(content):
     dId = ServerController.database.getDiagramFromLink(content['Id'])
     res = ServerController.deleteLink(content)
     if res:
-        print(content)
-        emit('deleteLinkHandler', {"code":200, 'lId':content['Id']}, to=dId)
+        diagramVersions[dId] += 1
+        emit('deleteLinkHandler', {"code":200, 'lId':content['Id'],"version":diagramVersions[dId]}, to=dId)
     else:
         emit('deleteLinkHandler', {"code":422})
     

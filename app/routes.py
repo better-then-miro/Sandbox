@@ -46,7 +46,7 @@ def getDiagramContent(content):
             if dia.Id not in diagramVersions.keys():
                 diagramVersions[dia.Id] = 0 
             res["version"] = diagramVersions[dia.Id]
-            print("joint to ",dia.Id)
+            print("joined to ",dia.Id)
             emit("getDiagramContentHandler", res)
     else:
         emit("getDiagramContentHandler", {"code":422})
@@ -62,7 +62,7 @@ def updateBlockProperties(content):
             emit("updatePropertiesHandler", {"code": 200})
             copy["code"] = 200
             diagramVersions[Id] += 1
-            copy["version"] = diagramVersions[Id]
+            copy["version"] = diagramVersions[Id] 
             emit("updatePropertiesHandler", copy, to = Id)
     #TODO figure out what we are supposed to send here
     else:
@@ -185,6 +185,11 @@ def deleteProject():
         return jsonify(success = True)
     return Response(status = 422)
 
+#@app.route("/debug", methods = ["POST"])
+#def getSuka():
+#    
+#    bId = request.json["bId"]
+#    ServerController.database.get
 # legacy
 @app.route("/example3", methods = ['GET','POST'])
 def example3():

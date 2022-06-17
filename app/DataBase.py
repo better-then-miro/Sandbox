@@ -65,8 +65,8 @@ class DataBase(metaclass = Singleton):
             y INTEGER,
             width INTEGER,
             height INTEGER,
-            description TEXT,
             title TEXT,
+            description TEXT,
             additionalFields TEXT,
             PRIMARY KEY (bId)
         )''')
@@ -261,9 +261,13 @@ class DataBase(metaclass = Singleton):
             dia.links = self.getLinks(dId)
         return dia
 
+    def getBlockById(self, bId):
+        with self.conn: 
+            self.c.execute("SELECT ")
+
     def getBlocks(self, dId):
         with self.conn:
-            self.c.execute(''' SELECT b.bId ,b.Type ,b.x ,b.y ,b.width ,b.height ,b.description,b.title,b.additionalFields
+            self.c.execute(''' SELECT b.bId ,b.Type ,b.x ,b.y ,b.width ,b.height , b.title, b.description, b.additionalFields
             FROM Blocks b INNER JOIN DiagramToBlocks db ON
             b.bId = db.bId and db.dId = :dId
             ''', {"dId": dId})

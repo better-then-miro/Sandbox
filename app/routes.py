@@ -1,4 +1,4 @@
-from app import app, socketio, ServerController
+from app import app, socketio, ServerController, diagramVersions
 from flask import render_template, request, jsonify, Response
 from flask_socketio import emit, join_room, leave_room
 
@@ -43,6 +43,9 @@ def getDiagramContent(content):
             res = dia.serializeContent()
             res["code"] = 200
             join_room(dia.Id)
+            if dia.Id not in diagramVersions.keys():
+                diagramVersions[dia.Id] = 0 
+            res["version"] = diagramVersions[dia.Id]
             print("joint to ",dia.Id)
             emit("getDiagramContentHandler", res)
     else:
@@ -58,6 +61,8 @@ def updateBlockProperties(content):
         if Id is not None and ServerController.modifyBlockById(content):
             emit("updatePropertiesHandler", {"code": 200})
             copy["code"] = 200
+            diagramVersions[Id] += 1
+            copy["version"] = diagramVersions[Id]
             emit("updatePropertiesHandler", copy, to = Id)
     #TODO figure out what we are supposed to send here
     else:

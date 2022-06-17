@@ -56,7 +56,7 @@ def getDiagramContent(content):
 @socketio.on("updateBlockProperties", namespace="/main")
 def updateBlockProperties(content):
     if content is not None :
-        Id = ServerController.getDiagramId(content)
+        Id = ServerController.getDiagramIdFromBlock(content)
         copy = content.copy()
         if Id is not None and ServerController.modifyBlockById(content):
             emit("updatePropertiesHandler", {"code": 200})
@@ -70,8 +70,15 @@ def updateBlockProperties(content):
     
 @socketio.on("updateLinkProperties", namespace= "/main")
 def modifyLinkById(content):
-    if content is not None and ServerController.modifyLinkById(content):
-        emit("updateLinkPropertiesHandler", {"code": 200})
+    if content is not None :
+        Id = ServerController.getDiagramIdFromLink(content)
+        copy = content.copy()
+        if Id is not None and ServerController.modifyLinkById(content):
+            emit("updateLinkPropertiesHandler", {"code": 200})
+            copy["code"] = 200
+            diagramVersions[Id] += 1
+            copy["version"] = diagramVersions[Id]
+            emit("updateLinkPropertiesHandler", copy, to = Id)
     else:
         emit("updateLinkPropertiesHandler", {"code": 422})
     
